@@ -46,5 +46,5 @@ Inspired by http://codeseven.github.io/toastr/demo.html.
 Copyright © 2013 [Jiri Kavulak](https://twitter.com/jirikavi).
 
 ## License 
-toastr is under MIT license - http://www.opensource.org/licenses/mit-license.php
+AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php
 
