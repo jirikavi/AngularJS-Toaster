@@ -18,7 +18,8 @@ angular.module('toaster', [])
         this.toast = {
             type: type,
             title: title,
-            body: body
+            body: body,
+            timeout: timeout,
         };
         $rootScope.$broadcast('toaster-newToast');
     };
@@ -72,7 +73,8 @@ function ($compile, $timeout, toasterConfig, toaster) {
         id++;
         angular.extend(toast, { id: id });
         
-        if (mergedConfig['time-out'] > 0)
+        var timeout = typeof(toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+        if (timeout > 0)
             setTimeout(toast, mergedConfig['time-out']);
         
         if (mergedConfig['newest-on-top'] === true)
