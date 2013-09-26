@@ -13,7 +13,7 @@
  */
  
 angular.module('toaster', [])
-.service('toaster', function ($rootScope) {
+.service('toaster', ['$rootScope', function ($rootScope) {
     this.pop = function (type, title, body) {
         this.toast = {
             type: type,
@@ -94,7 +94,7 @@ function ($compile, $timeout, toasterConfig, toaster) {
         addToast(toaster.toast);
       });
     },
-    controller: function($scope, $element, $attrs) {
+    controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
       
       $scope.stopTimer = function(toast){
         if(toast.timeout)
