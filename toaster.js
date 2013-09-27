@@ -15,7 +15,7 @@
  
 angular.module('toaster', [])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body) {
+    this.pop = function (type, title, body, timeout) {
         this.toast = {
             type: type,
             title: title,
@@ -24,7 +24,7 @@ angular.module('toaster', [])
         };
         $rootScope.$broadcast('toaster-newToast');
     };
-})
+}])
 .constant('toasterConfig', {
   				'tap-to-dismiss': true,
 					'newest-on-top': true,
@@ -76,7 +76,7 @@ function ($compile, $timeout, toasterConfig, toaster) {
         
         var timeout = typeof(toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
         if (timeout > 0)
-            setTimeout(toast, mergedConfig['time-out']);
+            setTimeout(toast, timeout);
         
         if (mergedConfig['newest-on-top'] === true)
             scope.toasters.unshift(toast);
@@ -116,10 +116,10 @@ function ($compile, $timeout, toasterConfig, toaster) {
             $scope.removeToast(id);
         }
       };
-    },
+    }],
     template:
     '<div  id="toast-container" ng-class="config.position">' +
-      '<div ng-animate="\'animateToaster\'" ng-repeat="toaster in toasters">' +
+      '<div ng-class="\'animateToaster\'" ng-repeat="toaster in toasters">' +
         '<div class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)">' +
           '<div ng-class="config.title">{{toaster.title}}</div>' +
           '<div ng-class="config.message">{{toaster.body}}' +
