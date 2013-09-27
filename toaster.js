@@ -13,12 +13,13 @@
  */
  
 angular.module('toaster', [])
-.service('toaster', function ($rootScope) {
+.service('toaster', ['$rootScope', function ($rootScope) {
     this.pop = function (type, title, body) {
         this.toast = {
             type: type,
             title: title,
-            body: body
+            body: body,
+            timeout: timeout,
         };
         $rootScope.$broadcast('toaster-newToast');
     };
@@ -72,7 +73,8 @@ function ($compile, $timeout, toasterConfig, toaster) {
         id++;
         angular.extend(toast, { id: id });
         
-        if (mergedConfig['time-out'] > 0)
+        var timeout = typeof(toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+        if (timeout > 0)
             setTimeout(toast, mergedConfig['time-out']);
         
         if (mergedConfig['newest-on-top'] === true)
@@ -92,7 +94,7 @@ function ($compile, $timeout, toasterConfig, toaster) {
         addToast(toaster.toast);
       });
     },
-    controller: function($scope, $element, $attrs) {
+    controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
       
       $scope.stopTimer = function(toast){
         if(toast.timeout)
