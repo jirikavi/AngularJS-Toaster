@@ -5,10 +5,11 @@ AngularJS-Toaster
 (contains CSS3 animation).
 
 ## Current Version
-0.2
+0.3
 
 ## Demo
-- Simple demo is placed at http://plnkr.co/edit/iaC2NY
+- Simple demo is placed at http://plnkr.co/edit/U65t4p
+- Old vesrion with Angular 1.2.0-rc.2 is placed at http://plnkr.co/edit/iaC2NY
 - Old version with Angular 1.1.5 is placed at http://plnkr.co/mVR4P4
 
 ## Getting started
@@ -17,8 +18,8 @@ AngularJS-Toaster
 
 		<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" />
     	<link href="toaster.css" rel="stylesheet" />
-    	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular.min.js" ></script>
-    	<script src="http://code.angularjs.org/1.2.0-rc.2/angular-animate.min.js" ></script>
+    	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.3/angular.min.js" ></script>
+    	<script src="http://code.angularjs.org/1.2.0-rc.3/angular-animate.min.js" ></script>
 
 2. Add toaster container directive: `<toaster-container> </toaster-container>`
 
