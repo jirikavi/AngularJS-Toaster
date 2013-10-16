@@ -2,7 +2,7 @@
  
 /*
  * AngularJS Toaster
- * Version: 0.2
+ * Version: 0.3
  *
  * Copyright 2013 Jiri Kavulak.  
  * All Rights Reserved.  
@@ -15,12 +15,13 @@
  
 angular.module('toaster', [])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout) {
+    this.pop = function (type, title, body, timeout, trustedHtml) {
         this.toast = {
             type: type,
             title: title,
             body: body,
             timeout: timeout,
+            trustedHtml: trustedHtml
         };
         $rootScope.$broadcast('toaster-newToast');
     };
@@ -40,13 +41,14 @@ angular.module('toaster', [])
 						success: 'toast-success',
 						warning: 'toast-warning'
 					},
+					'trustedHtml': false
 					'icon-class': 'toast-info',
 					'position-class': 'toast-top-right',
 					'title-class': 'toast-title',
 					'message-class': 'toast-message'
 				})
-.directive('toasterContainer', ['$compile', '$timeout', 'toasterConfig', 'toaster',
-function ($compile, $timeout, toasterConfig, toaster) {
+.directive('toasterContainer', ['$compile', '$timeout', '$sce', 'toasterConfig', 'toaster',
+function ($compile, $timeout, $sce, toasterConfig, toaster) {
   return {
     replace: true,
     restrict: 'EA',
@@ -73,6 +75,10 @@ function ($compile, $timeout, toasterConfig, toaster) {
         
         id++;
         angular.extend(toast, { id: id });
+        
+        if (toast.trustedHtml){
+          toast.html = $sce.trustAsHtml(toast.body);
+        }
         
         var timeout = typeof(toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
         if (timeout > 0)
@@ -122,7 +128,9 @@ function ($compile, $timeout, toasterConfig, toaster) {
       '<div ng-class="\'animateToaster\'" ng-repeat="toaster in toasters">' +
         '<div class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)">' +
           '<div ng-class="config.title">{{toaster.title}}</div>' +
-          '<div ng-class="config.message">{{toaster.body}}' +
+          '<div ng-class="config.message" ng-switch on="toaster.trustedHtml">' +
+            '<div ng-switch-when="true" ng-bind-html="toaster.html"></div>' +
+            '<div ng-switch-default >{{toaster.body}}</div>' +
           '</div>' +
         '</div>' +
       '</div>' +
