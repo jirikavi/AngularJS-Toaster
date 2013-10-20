@@ -41,7 +41,7 @@ angular.module('toaster', [])
 						success: 'toast-success',
 						warning: 'toast-warning'
 					},
-					'trustedHtml': false
+					'trustedHtml': false,
 					'icon-class': 'toast-info',
 					'position-class': 'toast-top-right',
 					'title-class': 'toast-title',
