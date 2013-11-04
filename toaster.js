@@ -13,7 +13,7 @@
  * Related to project of John Papa and Hans Fjällemark
  */
  
-angular.module('toaster', [])
+angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
     this.pop = function (type, title, body, timeout, trustedHtml) {
         this.toast = {
@@ -125,15 +125,13 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
     }],
     template:
     '<div  id="toast-container" ng-class="config.position">' +
-      '<div ng-class="\'animateToaster\'" ng-repeat="toaster in toasters">' +
-        '<div class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)">' +
+        '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)">' +
           '<div ng-class="config.title">{{toaster.title}}</div>' +
           '<div ng-class="config.message" ng-switch on="toaster.trustedHtml">' +
             '<div ng-switch-when="true" ng-bind-html="toaster.html"></div>' +
             '<div ng-switch-default >{{toaster.body}}</div>' +
           '</div>' +
         '</div>' +
-      '</div>' +
     '</div>'
   };
 }]);

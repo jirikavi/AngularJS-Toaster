@@ -1,20 +1,19 @@
 AngularJS-Toaster
 =================
 
-**AngularJS Toaster** is a customized version of **toastr** non-blocking notification javascript library. The original library works only with jQuery but in **AngularJS Toaster** is needed only AngularJS framework version 1.1.5 or higher
-(contains CSS3 animation).
+**AngularJS Toaster** is a AngularJS port of the **toastr** non-blocking notification jQuery library. Requires AngularJS v1.2.0-RC3, and animations use CSS3 transformations.
 
 ## Current Version
 0.3
 
 ## Demo
 - Simple demo is placed at http://plnkr.co/edit/U65t4p
-- Old vesrion with Angular 1.2.0-rc.2 is placed at http://plnkr.co/edit/iaC2NY
+- Old version with Angular 1.2.0-rc.2 is placed at http://plnkr.co/edit/iaC2NY
 - Old version with Angular 1.1.5 is placed at http://plnkr.co/mVR4P4
 
 ## Getting started
 
-1. Link scritps:
+1. Link scripts:
 
 		<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" />
     	<link href="toaster.css" rel="stylesheet" />
@@ -39,6 +38,14 @@ AngularJS-Toaster
 		    <button ng-click="pop()">Show a Toaster</button>
 		</div>
 
+### Other Options
+
+		// Change display position
+		<toaster-container toaster-options="{'position-class': 'toast-top-full-width'}"></toaster-container>
+		
+### Animations
+Unlike toastr, this library relies on ngAnimate and CSS3 transformations for animations.
+		
 ## Author
 **Jiri Kavulak**
 
