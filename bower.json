@@ -11,8 +11,8 @@
     "components"
   ],
   "dependencies": {
-    "angular": "~1.2.0-rc.2",
-    "angular-animate": "~1.2.0-rc.2",
+    "angular": "~1.2.0",
+    "angular-animate": "~1.2.0",
     "bootstrap": "~3.0.0"
   }
 }
