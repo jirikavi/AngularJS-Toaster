@@ -3,8 +3,7 @@ AngularJS-Toaster
 
 **AngularJS Toaster** is a AngularJS port of the **toastr** non-blocking notification jQuery library. Requires AngularJS v1.2.0, and animations use CSS3 transformations.
 
-## Current Version
-0.3
+### Current Version 0.3
 
 ## Demo
 - Simple demo is placed at http://plnkr.co/edit/U65t4p
@@ -15,34 +14,42 @@ AngularJS-Toaster
 
 1. Link scripts:
 
-		<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" />
-    	<link href="toaster.css" rel="stylesheet" />
-    	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js" ></script>
-    	<script src="http://code.angularjs.org/1.2.0/angular-animate.min.js" ></script>
+```html
+<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="toaster.css" rel="stylesheet" />
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js" ></script>
+<script src="http://code.angularjs.org/1.2.0/angular-animate.min.js" ></script>
+```
 
 2. Add toaster container directive: `<toaster-container> </toaster-container>`
 
 3. Prepare the call of toaster method:
 
-		// Display an info toast with no title
-		angular.module('main', ['toaster'])
-		.controller('myController', function($scope, toaster) {
-		    $scope.pop = function(){
-		        toaster.pop('success', "title", "text");
-		    };
-		});
+```js
+	// Display an info toast with no title
+	angular.module('main', ['toaster'])
+	.controller('myController', function($scope, toaster) {
+	    $scope.pop = function(){
+	        toaster.pop('success', "title", "text");
+	    };
+	});
+```
 
 4. Call controller method on button click:
 
-		<div ng-controller="myController">
-		    <button ng-click="pop()">Show a Toaster</button>
-		</div>
+```html
+<div ng-controller="myController">
+    <button ng-click="pop()">Show a Toaster</button>
+</div>
+```
 
 ### Other Options
 
-		// Change display position
-		<toaster-container toaster-options="{'position-class': 'toast-top-full-width'}"></toaster-container>
-		
+```html
+// Change display position
+<toaster-container toaster-options="{'position-class': 'toast-top-full-width'}"></toaster-container>
+```
+
 ### Animations
 Unlike toastr, this library relies on ngAnimate and CSS3 transformations for animations.
 		
