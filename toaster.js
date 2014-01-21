@@ -25,6 +25,9 @@ angular.module('toaster', ['ngAnimate'])
         };
         $rootScope.$broadcast('toaster-newToast');
     };
+    this.clearAll = function () {
+        $rootScope.$broadcast('toaster-clearAll');
+    };
 }])
 .constant('toasterConfig', {
   				'tap-to-dismiss': true,
@@ -68,6 +71,10 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
           message: mergedConfig['message-class'],
           tap: mergedConfig['tap-to-dismiss']
       };
+      scope.configureTimer = function configureTimer(toast) {
+          var timeout = typeof(toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+          setTimeout(toast, timeout);
+      }
       
       function addToast (toast){
         toast.type = mergedConfig['icon-classes'][toast.type];
@@ -87,9 +94,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             break;
         }
         
-        var timeout = typeof(toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
-        if (timeout > 0)
-            setTimeout(toast, timeout);
+        scope.configureTimer(toast);
         
         if (mergedConfig['newest-on-top'] === true)
             scope.toasters.unshift(toast);
@@ -102,17 +107,30 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
               scope.removeToast(toast.id);
             }, time);
       }
+
+      function clearAllToasts() {
+          scope.toasters = [];
+      }
       
       scope.toasters = [];
       scope.$on('toaster-newToast', function () {
         addToast(toaster.toast);
       });
+      scope.$on('toaster-clearAll', function () {
+        clearAllToasts();
+      });
     },
     controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
       
       $scope.stopTimer = function(toast){
-        if(toast.timeout)
+        if(toast.timeout) {
           $timeout.cancel(toast.timeout);
+            toast.timeout = null;
+        }
+      };
+      $scope.restartTimer = function(toast){
+        if(!toast.timeout)
+            $scope.configureTimer(toast);
       };
       
       $scope.removeToast = function (id){
@@ -132,7 +150,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
     }],
     template:
     '<div  id="toast-container" ng-class="config.position">' +
-        '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)">' +
+        '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
           '<div ng-class="config.title">{{toaster.title}}</div>' +
           '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
             '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
