@@ -76,7 +76,9 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         
         id++;
         angular.extend(toast, { id: id });
-        
+
+	// Set the toast.bodyOutputType to the default if it isn't set
+	toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
         switch(toast.bodyOutputType)
         {
           case 'trustedHtml':
