@@ -2,7 +2,7 @@
  
 /*
  * AngularJS Toaster
- * Version: 0.4.1
+ * Version: 0.4.2
  *
  * Copyright 2013 Jiri Kavulak.  
  * All Rights Reserved.  
@@ -24,6 +24,10 @@ angular.module('toaster', ['ngAnimate'])
             bodyOutputType: bodyOutputType
         };
         $rootScope.$broadcast('toaster-newToast');
+    };
+
+    this.clear = function() {
+    	$rootScope.$broadcast('toaster-clearToasts');
     };
 }])
 .constant('toasterConfig', {
@@ -108,6 +112,10 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
       scope.toasters = [];
       scope.$on('toaster-newToast', function () {
         addToast(toaster.toast);
+      });
+
+      scope.$on('toaster-clearToasts', function() {
+      	scope.toasters.splice(0, scope.toasters.length);
       });
     },
     controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
