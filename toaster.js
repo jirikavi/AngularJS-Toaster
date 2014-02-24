@@ -123,7 +123,10 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             });
 
             scope.$on('toaster-clearToasts', function () {
-                scope.toasters.splice(0, scope.toasters.length);
+                // wrap into timeout to trigger $apply method
+                $timeout(function(){
+                    scope.toasters.splice(0, scope.toasters.length);
+                });
             });
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
