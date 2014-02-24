@@ -118,7 +118,8 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
 
             scope.toasters = [];
             scope.$on('toaster-newToast', function () {
-                addToast(toaster.toast);
+                // wrap into timeout to trigger $apply method
+                $timeout(function(){addToast(toaster.toast)});
             });
 
             scope.$on('toaster-clearToasts', function () {
