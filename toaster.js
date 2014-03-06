@@ -89,7 +89,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                         toast.html = $sce.trustAsHtml(toast.body);
                         break;
                     case 'template':
-                        toast.bodyTemplate = mergedConfig['body-template'];
+                        toast.bodyTemplate =  toast.body || mergedConfig['body-template'];
                         break;
                 }
 
