@@ -1,0 +1,7 @@
+node_modules
+components
+bower_components
+
+# IntelliJ
+.idea/
+*.iml
