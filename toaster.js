@@ -58,6 +58,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
     return {
         replace: true,
         restrict: 'EA',
+        scope: true, // creates an internal scope for this directive
         link: function (scope, elm, attrs) {
 
             var id = 0;
