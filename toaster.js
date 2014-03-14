@@ -255,8 +255,10 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             };
 
             $scope.restartTimer = function (toast) {
-                if (toast.timeout)
-                    $scope.configureTimer(toast);
+                // if the current toast has a timeout setting and is still in the list of active toasts
+                if (toast.timeout && (this.toasters.indexOf(toast) !== -1)) {
+                    this.configureTimer(toast);
+                }
             };
 
             /**
