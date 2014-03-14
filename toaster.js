@@ -30,7 +30,27 @@ angular.module('toaster', ['ngAnimate'])
                 id: id
             };
         }
-        $rootScope.$broadcast('toaster-newToast', toast);
+
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-newToast', toast, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
+    };
+
+    /**
+     * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
+     * @param {string} id Toast id
+     * @returns {object} Toast object
+     */
+    this.get = function (id) {
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-getToast', id, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
     };
 
     this.clear = function () {
@@ -123,6 +143,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                         scope.toasters.shift();
                     }
                 }
+                return toast;
             }
 
             function setTimeout(toast, time) {
@@ -132,8 +153,14 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             }
 
             scope.toasters = [];
-            scope.$on('toaster-newToast', function (event, toast) {
-                addToast(toast);
+            scope.$on('toaster-newToast', function (event, toast, returnBag) {
+                var bakedToast = addToast(toast);
+                returnBag.toast = bakedToast; // side-effect hack to return the modified toast object to the event caller
+            });
+
+            scope.$on('toaster-getToast', function (event, toastId, returnBag) {
+                var result = scope.findToastById(toastId); // side-effect hack to return the modified toast object to the event caller
+                returnBag.toast = result && result.toast;
             });
 
             scope.$on('toaster-clearToasts', function () {
@@ -154,13 +181,33 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                     $scope.configureTimer(toast);
             };
 
-            $scope.removeToast = function (id) {
-                var i = 0;
-                for (i; i < $scope.toasters.length; i++) {
-                    if ($scope.toasters[i].id === id)
-                        break;
+            /**
+             * Finds a toast object by id
+             * @param {string} id
+             * @returns {index: number, toast: object} Returns an object giving the index of the toast object in "toasters" and the toast object.
+             * Or null if not found.
+             */
+            $scope.findToastById = function (id) {
+                var i = 0,
+                    toasters = this.toasters,
+                    len = toasters.length;
+                for (i; i < len; i++) {
+                    if (toasters[i].id === id) {
+                        return {
+                            index: i,
+                            toast: toasters[i]
+                        };
+                    }
                 }
-                $scope.toasters.splice(i, 1);
+                return null;
+            };
+
+            $scope.removeToast = function (id) {
+                var toastResult = $scope.findToastById(id);
+
+                if (toastResult) {
+                    $scope.toasters.splice(toastResult.index, 1);
+                }
             };
 
             $scope.remove = function (id) {
