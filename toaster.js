@@ -16,14 +16,14 @@
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
     this.pop = function (type, title, body, timeout, bodyOutputType) {
-        this.toast = {
+        var toast = {
             type: type,
             title: title,
             body: body,
             timeout: timeout,
             bodyOutputType: bodyOutputType
         };
-        $rootScope.$broadcast('toaster-newToast');
+        $rootScope.$broadcast('toaster-newToast', toast);
     };
 
     this.clear = function () {
@@ -122,8 +122,8 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             }
 
             scope.toasters = [];
-            scope.$on('toaster-newToast', function () {
-                addToast(toaster.toast);
+            scope.$on('toaster-newToast', function (event, toast) {
+                addToast(toast);
             });
 
             scope.$on('toaster-clearToasts', function () {
