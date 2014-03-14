@@ -139,7 +139,11 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             };
 
             scope.configureTimer = function configureTimer(toast) {
-                var timeout = typeof (toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+                // var timeout = typeof (toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+                var timeout = parseInt(toast.timeout, 10);
+                if (typeof timeout !== "number" || isNaN(timeout)) {
+                    timeout = mergedConfig['time-out'];
+                }
                 if (timeout > 0)
                     setTimeout(toast, timeout);
             };
