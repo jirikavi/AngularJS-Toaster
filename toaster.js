@@ -62,14 +62,12 @@ angular.module('toaster', ['ngAnimate'])
      * @returns {object} Toast object or null
      */
     this.edit = function (id, newProperties) {
-        var toast = null;
-        if (newProperties) {
-            toast = this.get(id);
-            if (toast) {
-                toast = angular.extend(toast, newProperties);
-            }
-        }
-        return toast;
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-editToast', id, newProperties, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
     };
 
         /**
@@ -148,11 +146,19 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             };
 
             function addToast(toast) {
+                var toastIdPreset = toast.id != null;
+                if (toastIdPreset) { // if the toast id is already set, we can edit the existing one if any
+                    var modifiedToast = editToast(toast.id, toast);
+                    if (modifiedToast) { // if we found and edited a toast, we can return it
+                        return modifiedToast;
+                    }
+                }
+
                 toast.type = mergedConfig['icon-classes'][toast.type];
                 if (!toast.type)
                     toast.type = mergedConfig['icon-class'];
 
-                if (toast.id == null) {
+                if (!toastIdPreset) {
                     toast.id = mergedConfig['default-id-prefix'] + defaultToastIdCounter++;
                 }
 
@@ -183,8 +189,19 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 return toast;
             }
 
+            function editToast(id, newProperties) {
+                var toast = null;
+                if (newProperties) {
+                    var result = scope.findToastById(id);
+                    if (result) {
+                        toast = angular.extend(result.toast, newProperties);
+                    }
+                }
+                return toast;
+            }
+
             function setTimeout(toast, time) {
-                toast.timeout = $timeout(function () {
+                toast.timeoutCancel = $timeout(function () {
                     scope.removeToast(toast.id);
                 }, time);
             }
@@ -200,6 +217,11 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 returnBag.toast = result && result.toast;
             });
 
+            scope.$on('toaster-editToast', function (event, toastId, newProperties, returnBag) {
+                var toast = editToast(toastId, newProperties); // side-effect hack to return the modified toast object to the event caller
+                returnBag.toast = toast;
+            });
+
             scope.$on('toaster-removeToast', function (event, toastId, returnBag) {
                 var result = scope.removeToast(toastId); // side-effect hack to return the modified toast object to the event caller
                 returnBag.toast = result && result.toast;
@@ -212,14 +234,14 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
 
             $scope.stopTimer = function (toast) {
-                if (toast.timeout) {
-                    $timeout.cancel(toast.timeout);
-                    toast.timeout = null;
+                if (toast.timeoutCancel) {
+                    $timeout.cancel(toast.timeoutCancel);
+                    toast.timeoutCancel = null;
                 }
             };
 
             $scope.restartTimer = function (toast) {
-                if (!toast.timeout)
+                if (toast.timeout)
                     $scope.configureTimer(toast);
             };
 
