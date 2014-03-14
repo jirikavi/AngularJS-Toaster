@@ -2,7 +2,7 @@
 
 /*
  * AngularJS Toaster
- * Version: 0.4.4
+ * Version: 0.4.5
  *
  * Copyright 2013 Jiri Kavulak.  
  * All Rights Reserved.  
@@ -61,11 +61,11 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         scope: true, // creates an internal scope for this directive
         link: function (scope, elm, attrs) {
 
-            var id = 0;
+            var id = 0,
+                mergedConfig;
 
-            var mergedConfig = toasterConfig;
             if (attrs.toasterOptions) {
-                angular.extend(mergedConfig, scope.$eval(attrs.toasterOptions));
+                mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
             }
 
             scope.config = {
