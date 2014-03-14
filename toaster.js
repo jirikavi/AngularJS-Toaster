@@ -146,33 +146,20 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             };
 
             function addToast(toast) {
-                var toastIdPreset = toast.id != null;
-                if (toastIdPreset) { // if the toast id is already set, we can edit the existing one if any
+                var toastIdPreset = toast.id != null && toast.id !== '';
+
+                // if the toast id was already set, we can edit the existing one if any
+                if (toastIdPreset) {
                     var modifiedToast = editToast(toast.id, toast);
                     if (modifiedToast) { // if we found and edited a toast, we can return it
                         return modifiedToast;
                     }
                 }
 
-                toast.type = mergedConfig['icon-classes'][toast.type];
-                if (!toast.type)
-                    toast.type = mergedConfig['icon-class'];
+                // setting default toast properties
+                setToastDefaultProperties(toast);
 
-                if (!toastIdPreset) {
-                    toast.id = mergedConfig['default-id-prefix'] + defaultToastIdCounter++;
-                }
-
-                // Set the toast.bodyOutputType to the default if it isn't set
-                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
-                switch (toast.bodyOutputType) {
-                    case 'trustedHtml':
-                        toast.html = $sce.trustAsHtml(toast.body);
-                        break;
-                    case 'template':
-                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
-                        break;
-                }
-
+                // otherwise, continue to setup the toast object since it's a new one
                 scope.configureTimer(toast);
 
                 if (mergedConfig['newest-on-top'] === true) {
@@ -189,12 +176,39 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 return toast;
             }
 
+            // setting default toast properties
+            function setToastDefaultProperties(toast) {
+                var toastIdPreset = toast.id != null && toast.id !== '';
+
+                toast.type = mergedConfig['icon-classes'][toast.type];
+                if (!toast.type) {
+                    toast.type = mergedConfig['icon-class'];
+                }
+
+                if (!toastIdPreset) {
+                    toast.id = mergedConfig['default-id-prefix'] + defaultToastIdCounter++;
+                }
+
+                // Set the toast.bodyOutputType to the default if it isn't set
+                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
+                switch (toast.bodyOutputType) {
+                    case 'trustedHtml':
+                        toast.html = $sce.trustAsHtml(toast.body);
+                        break;
+                    case 'template':
+                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                        break;
+                }
+            }
+
             function editToast(id, newProperties) {
                 var toast = null;
                 if (newProperties) {
                     var result = scope.findToastById(id);
                     if (result) {
                         toast = angular.extend(result.toast, newProperties);
+                        // setting default toast properties
+                        setToastDefaultProperties(toast);
                     }
                 }
                 return toast;
