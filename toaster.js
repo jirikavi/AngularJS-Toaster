@@ -61,8 +61,9 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         scope: true, // creates an internal scope for this directive
         link: function (scope, elm, attrs) {
 
-            var id = 0,
+            var toastCounter = 0,
                 mergedConfig;
+            scope.toasters = [];
 
             if (attrs.toasterOptions) {
                 mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
@@ -86,7 +87,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 if (!toast.type)
                     toast.type = mergedConfig['icon-class'];
 
-                toast.id = ++id;
+                toast.index = ++toastCounter;
 
                 // Set the toast.bodyOutputType to the default if it isn't set
                 toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
@@ -116,11 +117,10 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
 
             function setTimeout(toast, time) {
                 toast.timeout = $timeout(function () {
-                    scope.removeToast(toast.id);
+                    scope.removeToast(toast.index);
                 }, time);
             }
 
-            scope.toasters = [];
             scope.$on('toaster-newToast', function (event, toast) {
                 addToast(toast);
             });
@@ -143,24 +143,24 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                     $scope.configureTimer(toast);
             };
 
-            $scope.removeToast = function (id) {
+            $scope.removeToast = function (toastIndex) {
                 var i = 0;
                 for (i; i < $scope.toasters.length; i++) {
-                    if ($scope.toasters[i].id === id)
+                    if ($scope.toasters[i].index === toastIndex)
                         break;
                 }
                 $scope.toasters.splice(i, 1);
             };
 
-            $scope.remove = function (id) {
+            $scope.remove = function (toastIndex) {
                 if ($scope.config.tap === true) {
-                    $scope.removeToast(id);
+                    $scope.removeToast(toastIndex);
                 }
             };
         }],
         template:
         '<div  id="toast-container" ng-class="config.position">' +
-            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
+            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.index)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
               '<div ng-class="config.title">{{toaster.title}}</div>' +
               '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                 '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
