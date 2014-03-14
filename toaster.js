@@ -16,14 +16,20 @@
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
     this.pop = function (type, title, body, timeout, bodyOutputType, id) {
-        var toast = {
-            type: type,
-            title: title,
-            body: body,
-            timeout: timeout,
-            bodyOutputType: bodyOutputType,
-            id: id
-        };
+        var toast;
+
+        if (type && (arguments.length === 1) && (typeof type === 'object')) { // if we're given a toast definition instead of a list of properties
+            toast = type;
+        } else {
+            toast = {
+                type: type,
+                title: title,
+                body: body,
+                timeout: timeout,
+                bodyOutputType: bodyOutputType,
+                id: id
+            };
+        }
         $rootScope.$broadcast('toaster-newToast', toast);
     };
 
