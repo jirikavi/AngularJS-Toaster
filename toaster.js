@@ -250,11 +250,14 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
              * @returns {object} Returns the deleted toast object or null if not found.
              */
             $scope.removeToast = function (id) {
-                var toastResult = $scope.findToastById(id);
+                var toastResult = this.findToastById(id);
 
                 if (toastResult) {
-                    $scope.toasters.splice(toastResult.index, 1);
-                    return toastResult.toast;
+                    var toast = toastResult.toast;
+                    this.toasters.splice(toastResult.index, 1);
+
+                    this.stopTimer(toast);
+                    return toast;
                 }
                 return null;
             };
