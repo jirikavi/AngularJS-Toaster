@@ -86,8 +86,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 if (!toast.type)
                     toast.type = mergedConfig['icon-class'];
 
-                id++;
-                angular.extend(toast, { id: id });
+                toast.id = ++id;
 
                 // Set the toast.bodyOutputType to the default if it isn't set
                 toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
