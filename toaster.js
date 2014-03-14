@@ -63,7 +63,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         scope: true, // creates an internal scope for this directive
         link: function (scope, elm, attrs) {
 
-            var id = 0,
+            var defaultToastIdCounter = 0,
                 mergedConfig;
             scope.toasters = [];
 
@@ -90,7 +90,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                     toast.type = mergedConfig['icon-class'];
 
                 if (toast.id == null) {
-                    toast.id = mergedConfig['default-id-prefix'] + id++;
+                    toast.id = mergedConfig['default-id-prefix'] + defaultToastIdCounter++;
                 }
 
                 // Set the toast.bodyOutputType to the default if it isn't set
