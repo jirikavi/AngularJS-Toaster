@@ -43,7 +43,7 @@ angular.module('toaster', ['ngAnimate'])
      * Get a toast object by id
      * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
      * @param {string} id Toast id
-     * @returns {object} Toast object or null
+     * @returns {object} Toast object or null if not found.
      */
     this.get = function (id) {
         var returnBag = {};
@@ -59,7 +59,7 @@ angular.module('toaster', ['ngAnimate'])
      * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
      * @param {string} id Toast id
      * @param {Object} newProperties
-     * @returns {object} Toast object or null
+     * @returns {object} Modified toast object or null if not found.
      */
     this.edit = function (id, newProperties) {
         var returnBag = {};
@@ -70,7 +70,7 @@ angular.module('toaster', ['ngAnimate'])
         return returnBag.toast;
     };
 
-        /**
+    /**
      * Close a toast object by id
      * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
      * @param {string} id Toast id
@@ -242,7 +242,11 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             });
 
             scope.$on('toaster-clearToasts', function () {
-                scope.toasters.splice(0, scope.toasters.length);
+                var toasters = scope.toasters;
+                for (var i= 0, len = toasters.length; i < len; i++) {
+                    scope.stopTimer(toasters[i]);
+                }
+                scope.toasters.splice(0, toasters.length);
             });
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
