@@ -15,13 +15,14 @@
 
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout, bodyOutputType) {
+    this.pop = function (type, title, body, timeout, bodyOutputType, id) {
         var toast = {
             type: type,
             title: title,
             body: body,
             timeout: timeout,
-            bodyOutputType: bodyOutputType
+            bodyOutputType: bodyOutputType,
+            id: id
         };
         $rootScope.$broadcast('toaster-newToast', toast);
     };
@@ -51,7 +52,8 @@ angular.module('toaster', ['ngAnimate'])
     'icon-class': 'toast-info',
     'position-class': 'toast-top-right',
     'title-class': 'toast-title',
-    'message-class': 'toast-message'
+    'message-class': 'toast-message',
+    'default-id-prefix': '__toast-'
 })
 .directive('toasterContainer', ['$compile', '$timeout', '$sce', 'toasterConfig', 'toaster',
 function ($compile, $timeout, $sce, toasterConfig, toaster) {
@@ -87,7 +89,9 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 if (!toast.type)
                     toast.type = mergedConfig['icon-class'];
 
-                toast.id = ++id;
+                if (toast.id == null) {
+                    toast.id = mergedConfig['default-id-prefix'] + id++;
+                }
 
                 // Set the toast.bodyOutputType to the default if it isn't set
                 toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
