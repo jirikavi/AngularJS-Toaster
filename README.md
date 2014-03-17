@@ -125,7 +125,9 @@ Edit a toast object by id with a given object map to override its properties.
 * `newProperties` {object} Object map that will override the target toast object
 * `options` {object} Object map to pass more options parameters.  
 	Supported options:
-	* `refresh` {boolean} If true, the toast timer will be restarted (i.e. extend the display time of the toast). Works only if the current `timeout` value is greater than 0.
+	* `refresh` {boolean} If true, the toast timer will be restarted (i.e. extend the display time of the toast).
+		* If `timeout > 0`, the toast timer will be restarted.
+		* If `timeout === 0`, then the toast will become sticky.
 
 *Returns*  
 Modified toast object or null if not found.

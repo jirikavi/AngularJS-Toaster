@@ -60,7 +60,7 @@ angular.module('toaster', ['ngAnimate'])
      * @param {string} id Toast id
      * @param {Object} newProperties
      * @param {Object} options Hashmap of options.
-     * @param {boolean} options.refresh If true, the toast timer will be restarted provided that `timeout > 0`
+     * @param {boolean} options.refresh If true, the toast timer will be restarted provided that `timeout > 0`. If `timeout === 0`, then the toast will become sticky.
      * @returns {object} Modified toast object or null if not found.
      */
     this.edit = function (id, newProperties, options) {
@@ -234,10 +234,9 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             });
 
             scope.$on('toaster-editToast', function (event, toastId, newProperties, options, returnBag) {
-                var toast = editToast(toastId, newProperties), // side-effect hack to return the modified toast object to the event caller
-                    timeout = toast && toast.timeout;
+                var toast = editToast(toastId, newProperties); // side-effect hack to return the modified toast object to the event caller
 
-                if (timeout && options && options.refresh) { // refresh your toast?
+                if (options && options.refresh) { // refresh your toast?
                     scope.stopTimer(toast);
                     scope.restartTimer(toast);
                 }
