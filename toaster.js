@@ -236,7 +236,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             scope.$on('toaster-editToast', function (event, toastId, newProperties, options, returnBag) {
                 var toast = editToast(toastId, newProperties); // side-effect hack to return the modified toast object to the event caller
 
-                if (options && options.refresh) { // refresh your toast?
+                if (toast && options && options.refresh) { // refresh your toast?
                     scope.stopTimer(toast);
                     scope.restartTimer(toast);
                 }
