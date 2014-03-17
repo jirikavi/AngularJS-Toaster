@@ -59,11 +59,13 @@ angular.module('toaster', ['ngAnimate'])
      * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
      * @param {string} id Toast id
      * @param {Object} newProperties
+     * @param {Object} options Hashmap of options.
+     * @param {boolean} options.refresh If true, the toast timer will be restarted provided that `timeout > 0`
      * @returns {object} Modified toast object or null if not found.
      */
-    this.edit = function (id, newProperties) {
+    this.edit = function (id, newProperties, options) {
         var returnBag = {};
-        $rootScope.$broadcast('toaster-editToast', id, newProperties, returnBag);
+        $rootScope.$broadcast('toaster-editToast', id, newProperties, options, returnBag);
 
         // Currently designed to return only a single toast.
         // Not ready for a use case where there's more than one toastContainer
@@ -231,8 +233,15 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 returnBag.toast = result && result.toast;
             });
 
-            scope.$on('toaster-editToast', function (event, toastId, newProperties, returnBag) {
-                var toast = editToast(toastId, newProperties); // side-effect hack to return the modified toast object to the event caller
+            scope.$on('toaster-editToast', function (event, toastId, newProperties, options, returnBag) {
+                var toast = editToast(toastId, newProperties), // side-effect hack to return the modified toast object to the event caller
+                    timeout = toast && toast.timeout;
+
+                if (timeout && options && options.refresh) { // refresh your toast?
+                    scope.stopTimer(toast);
+                    scope.restartTimer(toast);
+                }
+
                 returnBag.toast = toast;
             });
 
