@@ -117,12 +117,15 @@ Get a toast object by id.
 Toast object or null if not found.
 
 ##### Function toaster.edit
-Edit a toast object by id with a given object map to override its properties
+Edit a toast object by id with a given object map to override its properties.
 
 *Parameters*
 
 * `id` {string} The notification box identifier.
 * `newProperties` {object} Object map that will override the target toast object
+* `options` {object} Object map to pass more options parameters.  
+	Supported options:
+	* `refresh` {boolean} If true, the toast timer will be restarted (i.e. extend the display time of the toast). Works only if the current `timeout` value is greater than 0.
 
 *Returns*  
 Modified toast object or null if not found.
