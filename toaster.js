@@ -15,13 +15,14 @@
 
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout, bodyOutputType) {
+    this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
         this.toast = {
             type: type,
             title: title,
             body: body,
             timeout: timeout,
-            bodyOutputType: bodyOutputType
+            bodyOutputType: bodyOutputType,
+            clickHandler: clickHandler
         };
         $rootScope.$broadcast('toaster-newToast');
     };
@@ -151,15 +152,19 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 $scope.toasters.splice(i, 1);
             };
 
-            $scope.remove = function (id) {
+            $scope.click = function (toaster) {
                 if ($scope.config.tap === true) {
-                    $scope.removeToast(id);
+                    if (toaster.clickHandler) {
+                        $scope.$parent.$eval(toaster.clickHandler)(toaster);
+                    } else {
+                        $scope.removeToast(toaster.id);
+                    }
                 }
             };
         }],
         template:
         '<div  id="toast-container" ng-class="config.position">' +
-            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
+            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
               '<div ng-class="config.title">{{toaster.title}}</div>' +
               '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                 '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
