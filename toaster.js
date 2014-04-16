@@ -64,9 +64,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             var id = 0,
                 mergedConfig;
 
-            if (attrs.toasterOptions) {
-                mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
-            }
+            mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
 
             scope.config = {
                 position: mergedConfig['position-class'],
@@ -90,7 +88,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 angular.extend(toast, { id: id });
 
                 // Set the toast.bodyOutputType to the default if it isn't set
-                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
+                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
                 switch (toast.bodyOutputType) {
                     case 'trustedHtml':
                         toast.html = $sce.trustAsHtml(toast.body);
