@@ -11,7 +11,7 @@
     "components"
   ],
   "dependencies": {
-    "angular": "~1.2.6",
+    "angular": ">1.2.6",
     "angular-animate": "~1.2.8"
   }
 }
