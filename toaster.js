@@ -115,9 +115,11 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             }
 
             function setTimeout(toast, time) {
-                toast.timeout = $timeout(function () {
-                    scope.removeToast(toast.id);
-                }, time);
+                toast.timeout = (function(){
+                    $timeout(function (){
+                        scope.removeToast(toast.id);
+                    }, time)
+                })();
             }
 
             scope.toasters = [];
