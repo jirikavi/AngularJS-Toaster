@@ -44,6 +44,7 @@ angular.module('toaster', ['ngAnimate'])
     'icon-classes': {
         error: 'toast-error',
         info: 'toast-info',
+        wait: 'toast-wait',
         success: 'toast-success',
         warning: 'toast-warning'
     },
