@@ -17,7 +17,6 @@ AngularJS-Toaster
 1. Link scripts:
 
 ```html
-<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" />
 <link href="http://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.4/toaster.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js" ></script>
 <script src="http://code.angularjs.org/1.2.0/angular-animate.min.js" ></script>
