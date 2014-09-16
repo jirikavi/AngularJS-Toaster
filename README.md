@@ -68,6 +68,7 @@ Opens a notification box.
   * `template`: the box contents will be rendered from an angular template URL referenced by `body`. Example: `body = '/partials/notification.html'`
 * `id` {string} The notification box identifier.
 * `clickHandler` {Function} Click handler executed when the user clicks/taps on a toast.
+  Function signature: function(toaster) {}
   Remove (hide) the current toast only if it returns `true`.
 
 *Returns*  
@@ -75,12 +76,16 @@ A *toast* definition object as following example:
 
 ```js
 {
-	type: 'info',
-	title: 'some title',
-	body: 'some body',
-	timeout: 5000,
-	bodyOutputType: '',
-	id: '__toast-0' // automatically generated if no 'id' provided
+  type: 'info',
+  title: 'some title',
+  body: 'some body',
+  timeout: 5000,
+  bodyOutputType: '',
+  id: '__toast-0', // automatically generated if no 'id' provided
+  clickHandler: function(toaster) {
+    //...
+    return true; // or false to prevent hiding the toast
+  }
 };
 ```
 
@@ -90,24 +95,24 @@ A *toast* definition object as following example:
 toaster.pop('success', 'Hello', 'World');
 
 toaster.pop({
-	type: 'info',
-	title: 'Big news',
-	body: 'You are awesome'
+  type: 'info',
+  title: 'Big news',
+  body: 'You are awesome'
 });
 
 toaster.pop({
-	type: 'info',
-	title: 'Big news',
-	body: 'You are awesome'
+  type: 'info',
+  title: 'Big news',
+  body: 'You are awesome'
 });
 
 toaster.pop({
-	type: 'info',
-	id: 'infoId',
-	title: 'Big news',
-	body: 'You are <strong>awesome</strong>',
-	timeout: 5000,
-    bodyOutputType: 'trustedHtml'
+  type: 'info',
+  id: 'infoId',
+  title: 'Big news',
+  body: 'You are <strong>awesome</strong>',
+  timeout: 5000,
+  bodyOutputType: 'trustedHtml'
 });
 
 ```
@@ -172,6 +177,7 @@ Current default config is:
     'icon-classes': {
         error: 'toast-error',
         info: 'toast-info',
+        wait: 'toast-wait',
         success: 'toast-success',
         warning: 'toast-warning'
     },
