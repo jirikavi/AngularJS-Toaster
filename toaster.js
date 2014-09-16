@@ -2,7 +2,7 @@
 
 /*
  * AngularJS Toaster
- * Version: 0.4.5
+ * Version: 0.4.7
  *
  * Copyright 2013 Jiri Kavulak.  
  * All Rights Reserved.  
@@ -15,20 +15,21 @@
 
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout, bodyOutputType, id) {
+    this.pop = function (type, title, body, timeout, bodyOutputType, id, clickHandler) {
         var toast;
 
         if (type && (arguments.length === 1) && (typeof type === 'object')) { // if we're given a toast definition instead of a list of properties
             toast = type;
         } else {
             toast = {
-                type: type,
-                title: title,
-                body: body,
-                timeout: timeout,
-                bodyOutputType: bodyOutputType,
-                id: id
-            };
+              type: type,
+              title: title,
+              body: body,
+              timeout: timeout,
+              bodyOutputType: bodyOutputType,
+              id: id,
+              clickHandler: clickHandler
+          };
         }
 
         var returnBag = {};
@@ -94,6 +95,7 @@ angular.module('toaster', ['ngAnimate'])
 .constant('toasterConfig', {
     'limit': 0,                   // limits max number of toasts 
     'tap-to-dismiss': true,
+    'close-button': false,
     'newest-on-top': true,
     //'fade-in': 1000,            // done in css
     //'on-fade-in': undefined,    // not implemented
@@ -104,6 +106,7 @@ angular.module('toaster', ['ngAnimate'])
     'icon-classes': {
         error: 'toast-error',
         info: 'toast-info',
+        wait: 'toast-wait',
         success: 'toast-success',
         warning: 'toast-warning'
     },
@@ -127,15 +130,14 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 mergedConfig;
             scope.toasters = [];
 
-            if (attrs.toasterOptions) {
-                mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
-            }
+            mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
 
             scope.config = {
                 position: mergedConfig['position-class'],
                 title: mergedConfig['title-class'],
                 message: mergedConfig['message-class'],
-                tap: mergedConfig['tap-to-dismiss']
+                tap: mergedConfig['tap-to-dismiss'],
+                closeButton: mergedConfig['close-button']
             };
 
             scope.configureTimer = function configureTimer(toast) {
@@ -155,7 +157,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                     var modifiedToast = editToast(toast.id, toast);
                     if (modifiedToast) { // if we found and edited a toast, we can return it
                         return modifiedToast;
-                    }
+                }
                 }
 
                 // setting default toast properties
@@ -192,7 +194,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 }
 
                 // Set the toast.bodyOutputType to the default if it isn't set
-                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type']
+                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
                 switch (toast.bodyOutputType) {
                     case 'trustedHtml':
                         toast.html = $sce.trustAsHtml(toast.body);
@@ -312,15 +314,24 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 return null;
             };
 
-            $scope.remove = function (id) {
+            $scope.click = function (toaster) {
                 if ($scope.config.tap === true) {
-                    $scope.removeToast(id);
+                    if (toaster.clickHandler && angular.isFunction($scope.$parent.$eval(toaster.clickHandler))) {
+                        var result = $scope.$parent.$eval(toaster.clickHandler)(toaster);
+                        if (result === true)
+                            $scope.removeToast(toaster.id);
+                    } else {
+                        if (angular.isString(toaster.clickHandler))
+                            console.log("TOAST-NOTE: Your click handler is not inside a parent scope of toaster-container.");
+                        $scope.removeToast(toaster.id);
+                    }
                 }
             };
         }],
         template:
         '<div  id="toast-container" ng-class="config.position">' +
-            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="remove(toaster.id)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
+            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
+              '<button class="toast-close-button" ng-show="config.closeButton">&times;</button>' +
               '<div ng-class="config.title">{{toaster.title}}</div>' +
               '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                 '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +

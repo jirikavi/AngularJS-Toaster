@@ -1,6 +1,6 @@
 {
   "name": "AngularJS-Toaster",
-  "version": "0.4.5",
+  "version": "0.4.7",
   "main": [
     "toaster.js",
     "toaster.css"
@@ -11,7 +11,7 @@
     "components"
   ],
   "dependencies": {
-    "angular": "~1.2.14",
+    "angular": ">1.2.6",
     "angular-animate": "~1.2.8"
   }
 }
