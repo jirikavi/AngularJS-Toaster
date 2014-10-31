@@ -212,8 +212,8 @@ button.toast-close-button {
   * AngularJS-Toaster
   * Version 0.3
  */
-#toast-container > div.ng-enter,
-#toast-container > div.ng-leave
+:not(.no-enter)#toast-container > div.ng-enter,
+:not(.no-leave)#toast-container > div.ng-leave
 { 
     -webkit-transition: 1000ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
     -moz-transition: 1000ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
@@ -222,12 +222,12 @@ button.toast-close-button {
     transition: 1000ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
 } 
 
-#toast-container > div.ng-enter.ng-enter-active, 
-#toast-container > div.ng-leave {
+:not(.no-enter)#toast-container > div.ng-enter.ng-enter-active, 
+:not(.no-leave)#toast-container > div.ng-leave {
     opacity: 0.8;
 }
 
-#toast-container > div.ng-leave.ng-leave-active,
-#toast-container > div.ng-enter {
+:not(.no-leave)#toast-container > div.ng-leave.ng-leave-active,
+:not(.no-enter)#toast-container > div.ng-enter {
     opacity: 0;
 }
