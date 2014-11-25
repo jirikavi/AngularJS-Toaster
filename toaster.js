@@ -1,8 +1,9 @@
+(function () {
 'use strict';
 
 /*
  * AngularJS Toaster
- * Version: 0.4.8
+ * Version: 0.4.9
  *
  * Copyright 2013 Jiri Kavulak.  
  * All Rights Reserved.  
@@ -16,19 +17,32 @@
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
     this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
-        this.toast = {
-            type: type,
-            title: title,
-            body: body,
-            timeout: timeout,
-            bodyOutputType: bodyOutputType,
-            clickHandler: clickHandler
-        };
-        $rootScope.$broadcast('toaster-newToast');
+        if (angular.isObject(type)) {
+            var params = type; // NOTE: anable parameters as pop argument
+            this.toast = {
+                type: params.type,
+                title: params.title,
+                body: params.body,
+                timeout: params.timeout,
+                bodyOutputType: params.bodyOutputType,
+                clickHandler: params.clickHandler
+            };
+        }
+        else {
+            this.toast = {
+                type: type,
+                title: title,
+                body: body,
+                timeout: timeout,
+                bodyOutputType: bodyOutputType,
+                clickHandler: clickHandler
+            };
+        }
+        $rootScope.$emit('toaster-newToast');
     };
 
     this.clear = function () {
-        $rootScope.$broadcast('toaster-clearToasts');
+        $rootScope.$emit('toaster-clearToasts');
     };
 }])
 .constant('toasterConfig', {
@@ -56,8 +70,8 @@ angular.module('toaster', ['ngAnimate'])
     'title-class': 'toast-title',
     'message-class': 'toast-message'
 })
-.directive('toasterContainer', ['$compile', '$timeout', '$sce', 'toasterConfig', 'toaster',
-function ($compile, $timeout, $sce, toasterConfig, toaster) {
+.directive('toasterContainer', ['$compile', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster',
+function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
     return {
         replace: true,
         restrict: 'EA',
@@ -119,17 +133,17 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             }
 
             function setTimeout(toast, time) {
-                toast.timeout = $timeout(function () {
+                toast.timeout = $interval(function () {
                     scope.removeToast(toast.id);
                 }, time);
             }
 
             scope.toasters = [];
-            scope.$on('toaster-newToast', function () {
+            $rootScope.$on('toaster-newToast', function () {
                 addToast(toaster.toast);
             });
 
-            scope.$on('toaster-clearToasts', function () {
+            $rootScope.$on('toaster-clearToasts', function () {
                 scope.toasters.splice(0, scope.toasters.length);
             });
         },
@@ -137,7 +151,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
 
             $scope.stopTimer = function (toast) {
                 if (toast.timeout) {
-                    $timeout.cancel(toast.timeout);
+                    $interval.cancel(toast.timeout);
                     toast.timeout = null;
                 }
             };
@@ -156,15 +170,15 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 $scope.toasters.splice(i, 1);
             };
 
-            $scope.click = function (toaster) {
+            $scope.click = function (toaster, isCloseButton) {
                 if ($scope.config.tap === true) {
                     var removeToast = true;
                     if (toaster.clickHandler) {
                         if (angular.isFunction(toaster.clickHandler)) {
-                            removeToast = toaster.clickHandler(toaster);
+                            removeToast = toaster.clickHandler(toaster, isCloseButton);
                         }
                         else if (angular.isFunction($scope.$parent.$eval(toaster.clickHandler))) {
-                            removeToast = $scope.$parent.$eval(toaster.clickHandler)(toaster);
+                            removeToast = $scope.$parent.$eval(toaster.clickHandler)(toaster, isCloseButton);
                         }
                         else {
                             console.log("TOAST-NOTE: Your click handler is not inside a parent scope of toaster-container.");
@@ -179,7 +193,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         template:
         '<div  id="toast-container" ng-class="[config.position, config.animation]">' +
             '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
-              '<button class="toast-close-button" ng-show="config.closeButton">&times;</button>' +
+              '<button class="toast-close-button" ng-show="config.closeButton" ng-click="click(toaster, true)">&times;</button>' +
               '<div ng-class="config.title">{{toaster.title}}</div>' +
               '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                 '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
@@ -190,3 +204,4 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         '</div>'
     };
 }]);
+})(window, document);
