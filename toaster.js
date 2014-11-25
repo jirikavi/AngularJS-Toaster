@@ -15,16 +15,77 @@
 
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
-        this.toast = {
-            type: type,
-            title: title,
-            body: body,
-            timeout: timeout,
-            bodyOutputType: bodyOutputType,
-            clickHandler: clickHandler
-        };
-        $rootScope.$broadcast('toaster-newToast');
+    this.pop = function (type, title, body, timeout, bodyOutputType, id, clickHandler) {
+        var toast;
+
+        if (type && (arguments.length === 1) && (typeof type === 'object')) { // if we're given a toast definition instead of a list of properties
+            toast = type;
+        } else {
+            toast = {
+              type: type,
+              title: title,
+              body: body,
+              timeout: timeout,
+              bodyOutputType: bodyOutputType,
+              id: id,
+              clickHandler: clickHandler
+          };
+        }
+
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-newToast', toast, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
+    };
+
+    /**
+     * Get a toast object by id
+     * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
+     * @param {string} id Toast id
+     * @returns {object} Toast object or null if not found.
+     */
+    this.get = function (id) {
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-getToast', id, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
+    };
+
+    /**
+     * Edit a toast object by id with a given object map to override its properties
+     * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
+     * @param {string} id Toast id
+     * @param {Object} newProperties
+     * @param {Object} options Hashmap of options.
+     * @param {boolean} options.refresh If true, the toast timer will be restarted provided that `timeout > 0`. If `timeout === 0`, then the toast will become sticky.
+     * @returns {object} Modified toast object or null if not found.
+     */
+    this.edit = function (id, newProperties, options) {
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-editToast', id, newProperties, options, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
+    };
+
+    /**
+     * Close a toast object by id
+     * @TODO Move the toast object management to the service instead. That would avoid a fair amount of indirect calls between service-controller-view
+     * @param {string} id Toast id
+     * @returns {object} Toast object or null
+     */
+    this.close = function (id) {
+        var returnBag = {};
+        $rootScope.$broadcast('toaster-removeToast', id, returnBag);
+
+        // Currently designed to return only a single toast.
+        // Not ready for a use case where there's more than one toastContainer
+        return returnBag.toast;
     };
 
     this.clear = function () {
@@ -54,7 +115,8 @@ angular.module('toaster', ['ngAnimate'])
     'icon-class': 'toast-info',
     'position-class': 'toast-top-right',
     'title-class': 'toast-title',
-    'message-class': 'toast-message'
+    'message-class': 'toast-message',
+    'default-id-prefix': '__toast-'
 })
 .directive('toasterContainer', ['$compile', '$timeout', '$sce', 'toasterConfig', 'toaster',
 function ($compile, $timeout, $sce, toasterConfig, toaster) {
@@ -64,8 +126,9 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
         scope: true, // creates an internal scope for this directive
         link: function (scope, elm, attrs) {
 
-            var id = 0,
+            var defaultToastIdCounter = 0,
                 mergedConfig;
+            scope.toasters = [];
 
             mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
 
@@ -79,30 +142,29 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             };
 
             scope.configureTimer = function configureTimer(toast) {
-                var timeout = typeof (toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+                var timeout = parseInt(toast.timeout, 10);
+                if (typeof timeout !== "number" || isNaN(timeout)) {
+                    timeout = mergedConfig['time-out'];
+                }
                 if (timeout > 0)
                     setTimeout(toast, timeout);
             };
 
             function addToast(toast) {
-                toast.type = mergedConfig['icon-classes'][toast.type];
-                if (!toast.type)
-                    toast.type = mergedConfig['icon-class'];
+                var toastIdPreset = toast.id != null && toast.id !== '';
 
-                id++;
-                angular.extend(toast, { id: id });
-
-                // Set the toast.bodyOutputType to the default if it isn't set
-                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
-                switch (toast.bodyOutputType) {
-                    case 'trustedHtml':
-                        toast.html = $sce.trustAsHtml(toast.body);
-                        break;
-                    case 'template':
-                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
-                        break;
+                // if the toast id was already set, we can edit the existing one if any
+                if (toastIdPreset) {
+                    var modifiedToast = editToast(toast.id, toast);
+                    if (modifiedToast) { // if we found and edited a toast, we can return it
+                        return modifiedToast;
+                }
                 }
 
+                // setting default toast properties
+                setToastDefaultProperties(toast);
+
+                // otherwise, continue to setup the toast object since it's a new one
                 scope.configureTimer(toast);
 
                 if (mergedConfig['newest-on-top'] === true) {
@@ -116,44 +178,141 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                         scope.toasters.shift();
                     }
                 }
+                return toast;
+            }
+
+            // setting default toast properties
+            function setToastDefaultProperties(toast) {
+                var toastIdPreset = toast.id != null && toast.id !== '';
+
+                toast.type = mergedConfig['icon-classes'][toast.type];
+                if (!toast.type) {
+                    toast.type = mergedConfig['icon-class'];
+                }
+
+                if (!toastIdPreset) {
+                    toast.id = mergedConfig['default-id-prefix'] + defaultToastIdCounter++;
+                }
+
+                // Set the toast.bodyOutputType to the default if it isn't set
+                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
+                switch (toast.bodyOutputType) {
+                    case 'trustedHtml':
+                        toast.html = $sce.trustAsHtml(toast.body);
+                        break;
+                    case 'template':
+                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                        break;
+                }
+            }
+
+            function editToast(id, newProperties) {
+                var toast = null;
+                if (newProperties) {
+                    var result = scope.findToastById(id);
+                    if (result) {
+                        toast = angular.extend(result.toast, newProperties);
+                        // setting default toast properties
+                        setToastDefaultProperties(toast);
+                    }
+                }
+                return toast;
             }
 
             function setTimeout(toast, time) {
-                toast.timeout = $timeout(function () {
+                toast.timeoutCancel = $timeout(function () {
                     scope.removeToast(toast.id);
                 }, time);
             }
 
             scope.toasters = [];
-            scope.$on('toaster-newToast', function () {
-                addToast(toaster.toast);
+            scope.$on('toaster-newToast', function (event, toast, returnBag) {
+                var bakedToast = addToast(toast);
+                returnBag.toast = bakedToast; // side-effect hack to return the modified toast object to the event caller
+            });
+
+            scope.$on('toaster-getToast', function (event, toastId, returnBag) {
+                var result = scope.findToastById(toastId); // side-effect hack to return the modified toast object to the event caller
+                returnBag.toast = result && result.toast;
+            });
+
+            scope.$on('toaster-editToast', function (event, toastId, newProperties, options, returnBag) {
+                var toast = editToast(toastId, newProperties); // side-effect hack to return the modified toast object to the event caller
+
+                if (toast && options && options.refresh) { // refresh your toast?
+                    scope.stopTimer(toast);
+                    scope.restartTimer(toast);
+                }
+
+                returnBag.toast = toast;
+            });
+
+            scope.$on('toaster-removeToast', function (event, toastId, returnBag) {
+                var result = scope.removeToast(toastId); // side-effect hack to return the modified toast object to the event caller
+                returnBag.toast = result && result.toast;
             });
 
             scope.$on('toaster-clearToasts', function () {
-                scope.toasters.splice(0, scope.toasters.length);
+                var toasters = scope.toasters;
+                for (var i= 0, len = toasters.length; i < len; i++) {
+                    scope.stopTimer(toasters[i]);
+                }
+                scope.toasters.splice(0, toasters.length);
             });
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
 
             $scope.stopTimer = function (toast) {
-                if (toast.timeout) {
-                    $timeout.cancel(toast.timeout);
-                    toast.timeout = null;
+                if (toast.timeoutCancel) {
+                    $timeout.cancel(toast.timeoutCancel);
+                    toast.timeoutCancel = null;
                 }
             };
 
             $scope.restartTimer = function (toast) {
-                if (!toast.timeout)
-                    $scope.configureTimer(toast);
+                // if the current toast has a timeout setting and is still in the list of active toasts
+                if (toast.timeout && (this.toasters.indexOf(toast) !== -1)) {
+                    this.configureTimer(toast);
+                }
             };
 
-            $scope.removeToast = function (id) {
-                var i = 0;
-                for (i; i < $scope.toasters.length; i++) {
-                    if ($scope.toasters[i].id === id)
-                        break;
+            /**
+             * Finds a toast object by id
+             * @param {string} id
+             * @returns {index: number, toast: object} Returns an object giving the index of the toast object in "toasters" and the toast object.
+             * Or null if not found.
+             */
+            $scope.findToastById = function (id) {
+                var i = 0,
+                    toasters = this.toasters,
+                    len = toasters.length;
+                for (i; i < len; i++) {
+                    if (toasters[i].id === id) {
+                        return {
+                            index: i,
+                            toast: toasters[i]
+                        };
+                    }
                 }
-                $scope.toasters.splice(i, 1);
+                return null;
+            };
+
+            /**
+             * Deletes a toast object by id
+             * @param {string} id
+             * @returns {object} Returns the deleted toast object or null if not found.
+             */
+            $scope.removeToast = function (id) {
+                var toastResult = this.findToastById(id);
+
+                if (toastResult) {
+                    var toast = toastResult.toast;
+                    this.toasters.splice(toastResult.index, 1);
+
+                    this.stopTimer(toast);
+                    return toast;
+                }
+                return null;
             };
 
             $scope.click = function (toaster) {
