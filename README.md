@@ -7,7 +7,8 @@ AngularJS-Toaster
 ### Current Version 0.4.9
 
 ## Demo
-- Simple demo is at http://plnkr.co/edit/4qpHwp or http://plnkr.co/edit/lzYaZt (with version 0.4.5)
+- Simple demo is at http://plnkr.co/edit/1poa9A
+- Older versions are http://plnkr.co/edit/4qpHwp or http://plnkr.co/edit/lzYaZt (with version 0.4.5)
 - Older version with Angular 1.2.0 is placed at http://plnkr.co/edit/mejR4h
 - Older version with Angular 1.2.0-rc.2 is placed at http://plnkr.co/edit/iaC2NY
 - Older version with Angular 1.1.5 is placed at http://plnkr.co/mVR4P4
