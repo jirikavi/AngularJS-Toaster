@@ -15,14 +15,14 @@
 
 angular.module('toaster', ['ngAnimate'])
 .service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
+    this.pop = function (params) {
         this.toast = {
-            type: type,
-            title: title,
-            body: body,
-            timeout: timeout,
-            bodyOutputType: bodyOutputType,
-            clickHandler: clickHandler
+            type: params.type,
+            title: params.title,
+            body: params.body,
+            timeout: params.timeout,
+            bodyOutputType: params.bodyOutputType,
+            clickHandler: params.clickHandler
         };
         $rootScope.$broadcast('toaster-newToast');
     };

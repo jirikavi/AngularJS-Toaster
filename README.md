@@ -32,7 +32,11 @@ AngularJS-Toaster
 	angular.module('main', ['toaster'])
 	.controller('myController', function($scope, toaster) {
 	    $scope.pop = function(){
-	        toaster.pop('success', "title", "text");
+	        toaster.pop({
+                type: 'success', 
+                title: 'title', 
+                body: 'text'
+			});
 	    };
 	});
 ```
