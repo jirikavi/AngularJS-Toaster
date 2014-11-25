@@ -158,13 +158,19 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
 
             $scope.click = function (toaster) {
                 if ($scope.config.tap === true) {
-                    if (toaster.clickHandler && angular.isFunction($scope.$parent.$eval(toaster.clickHandler))) {
-                        var result = $scope.$parent.$eval(toaster.clickHandler)(toaster);
-                        if (result === true)
-                            $scope.removeToast(toaster.id);
-                    } else {
-                        if (angular.isString(toaster.clickHandler))
+                    var removeToast = true;
+                    if (toaster.clickHandler) {
+                        if (angular.isFunction(toaster.clickHandler)) {
+                            removeToast = toaster.clickHandler(toaster);
+                        }
+                        else if (angular.isFunction($scope.$parent.$eval(toaster.clickHandler))) {
+                            removeToast = $scope.$parent.$eval(toaster.clickHandler)(toaster);
+                        }
+                        else {
                             console.log("TOAST-NOTE: Your click handler is not inside a parent scope of toaster-container.");
+                        }
+                    }
+                    if (removeToast) {
                         $scope.removeToast(toaster.id);
                     }
                 }
