@@ -74,7 +74,8 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
                 title: mergedConfig['title-class'],
                 message: mergedConfig['message-class'],
                 tap: mergedConfig['tap-to-dismiss'],
-                closeButton: mergedConfig['close-button']
+                closeButton: mergedConfig['close-button'],
+                animation: mergedConfig['animation-class']
             };
 
             scope.configureTimer = function configureTimer(toast) {
@@ -170,7 +171,7 @@ function ($compile, $timeout, $sce, toasterConfig, toaster) {
             };
         }],
         template:
-        '<div  id="toast-container" ng-class="config.position">' +
+        '<div  id="toast-container" ng-class="[config.position, config.animation]">' +
             '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)"  ng-mouseout="restartTimer(toaster)">' +
               '<button class="toast-close-button" ng-show="config.closeButton">&times;</button>' +
               '<div ng-class="config.title">{{toaster.title}}</div>' +
