@@ -15,7 +15,7 @@ AngularJS-Toaster
 
 ## Getting started
 
-1. Link scripts:
+* Link scripts:
 
 ```html
 <link href="http://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.4/toaster.css" rel="stylesheet" />
@@ -24,9 +24,12 @@ AngularJS-Toaster
 <script src="http://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.4/toaster.js"></script>
 ```
 
-2. Add toaster container directive: `<toaster-container></toaster-container>`
+* Add toaster container directive to your HTML (will not be visible): 
+```html
+<toaster-container></toaster-container>
+```
 
-3. Prepare the call of toaster method:
+* Prepare the call of toaster method:
 
 ```js
 	// Display an info toast with no title
@@ -38,7 +41,7 @@ AngularJS-Toaster
 	});
 ```
 
-4. Call controller method on button click:
+* Call controller method on button click:
 
 ```html
 <div ng-controller="myController">
