@@ -20,7 +20,7 @@ Optionally: to install with bower, use:
 bower install --save angularjs-toaster
 ```
 
-1. Link scripts:
+* Link scripts:
 
 ```html
 <link href="http://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.4/toaster.css" rel="stylesheet" />
@@ -29,9 +29,13 @@ bower install --save angularjs-toaster
 <script src="http://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.4/toaster.js"></script>
 ```
 
-2. Add toaster container directive: `<toaster-container></toaster-container>`
+* Add toaster container directive: 
 
-3. Prepare the call of toaster method:
+```html
+<toaster-container></toaster-container>
+```
+
+* Prepare the call of toaster method:
 
 ```js
 	// Display an info toast with no title
@@ -43,7 +47,7 @@ bower install --save angularjs-toaster
 	});
 ```
 
-4. Call controller method on button click:
+* Call controller method on button click:
 
 ```html
 <div ng-controller="myController">
