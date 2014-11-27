@@ -15,6 +15,11 @@ AngularJS-Toaster
 
 ## Getting started
 
+Optionally: to install with bower, use:
+```
+bower install --save angularjs-toaster
+```
+
 1. Link scripts:
 
 ```html
