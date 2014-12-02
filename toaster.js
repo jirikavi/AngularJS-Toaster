@@ -171,7 +171,7 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
             };
 
             $scope.click = function (toaster, isCloseButton) {
-                if ($scope.config.tap === true) {
+                if ($scope.config.tap === true || isCloseButton == true) {
                     var removeToast = true;
                     if (toaster.clickHandler) {
                         if (angular.isFunction(toaster.clickHandler)) {
