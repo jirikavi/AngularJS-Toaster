@@ -68,7 +68,8 @@ angular.module('toaster', ['ngAnimate'])
     'icon-class': 'toast-info',
     'position-class': 'toast-top-right',
     'title-class': 'toast-title',
-    'message-class': 'toast-message'
+    'message-class': 'toast-message',
+    'mouseover-timer-stop': true // stop timeout on mouseover and restart timer on mouseout
 })
 .directive('toasterContainer', ['$compile', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster',
 function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
@@ -89,7 +90,8 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
                 message: mergedConfig['message-class'],
                 tap: mergedConfig['tap-to-dismiss'],
                 closeButton: mergedConfig['close-button'],
-                animation: mergedConfig['animation-class']
+                animation: mergedConfig['animation-class'],
+                mouseoverTimer:  mergedConfig['mouseover-timer-stop']
             };
 
             scope.configureTimer = function configureTimer(toast) {
@@ -130,11 +132,14 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
                         scope.toasters.shift();
                     }
                 }
+                
+                toast.mouseover = false;
             }
-
+            
             function setTimeout(toast, time) {
                 toast.timeout = $interval(function () {
-                    scope.removeToast(toast.id);
+                    if (!toast.mouseover)
+                        scope.removeToast(toast.id);
                 }, time);
             }
 
@@ -150,15 +155,24 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
 
             $scope.stopTimer = function (toast) {
-                if (toast.timeout) {
-                    $interval.cancel(toast.timeout);
-                    toast.timeout = null;
+                toast.mouseover = true;
+                if ($scope.config.mouseoverTimer === true) {
+                    if (toast.timeout) {
+                        $interval.cancel(toast.timeout);
+                        toast.timeout = null;
+                    }
                 }
             };
 
             $scope.restartTimer = function (toast) {
-                if (!toast.timeout)
-                    $scope.configureTimer(toast);
+                toast.mouseover = false;
+                if ($scope.config.mouseoverTimer === true) {
+                    if (!toast.timeout)
+                        $scope.configureTimer(toast);
+                } 
+                else if (toast.timeout === null) {
+                    $scope.removeToast(toaster.id);
+                } 
             };
 
             $scope.removeToast = function (id) {
