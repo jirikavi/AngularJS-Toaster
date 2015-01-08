@@ -15,36 +15,6 @@
  */
 
 angular.module('toaster', ['ngAnimate'])
-.service('toaster', ['$rootScope', function ($rootScope) {
-    this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
-        if (angular.isObject(type)) {
-            var params = type; // NOTE: anable parameters as pop argument
-            this.toast = {
-                type: params.type,
-                title: params.title,
-                body: params.body,
-                timeout: params.timeout,
-                bodyOutputType: params.bodyOutputType,
-                clickHandler: params.clickHandler
-            };
-        }
-        else {
-            this.toast = {
-                type: type,
-                title: title,
-                body: body,
-                timeout: timeout,
-                bodyOutputType: bodyOutputType,
-                clickHandler: clickHandler
-            };
-        }
-        $rootScope.$emit('toaster-newToast');
-    };
-
-    this.clear = function () {
-        $rootScope.$emit('toaster-clearToasts');
-    };
-}])
 .constant('toasterConfig', {
     'limit': 0,                   // limits max number of toasts 
     'tap-to-dismiss': true,
@@ -70,6 +40,42 @@ angular.module('toaster', ['ngAnimate'])
     'title-class': 'toast-title',
     'message-class': 'toast-message'
 })
+.service('toaster', ['$rootScope', 'toasterConfig', function ($rootScope, toasterConfig) {
+    this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
+        if (angular.isObject(type)) {
+            var params = type; // NOTE: anable parameters as pop argument
+            this.toast = {
+                type: params.type,
+                title: params.title,
+                body: params.body,
+                timeout: params.timeout,
+                bodyOutputType: params.bodyOutputType,
+                clickHandler: params.clickHandler
+            };
+        }
+        else {
+            this.toast = {
+                type: type,
+                title: title,
+                body: body,
+                timeout: timeout,
+                bodyOutputType: bodyOutputType,
+                clickHandler: clickHandler
+            };
+        }
+        $rootScope.$emit('toaster-newToast');
+    };
+
+    for (var type in toasterConfig['icon-classes']) {
+        this.type = function(title, body, timeout, bodyOutputType, clickHandler) {
+            this.pop(type, title, body, timeout, bodyOutputType, clickHandler);
+        };
+    }
+
+    this.clear = function () {
+        $rootScope.$emit('toaster-clearToasts');
+    };
+}])
 .directive('toasterContainer', ['$compile', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster',
 function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
     return {
