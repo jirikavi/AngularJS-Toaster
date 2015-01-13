@@ -92,6 +92,16 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
                 animation: mergedConfig['animation-class']
             };
 
+            scope.deregClearToasts = null;
+            scope.deregNewToast = null;
+
+            scope.$on("$destroy",function () {
+                if (scope.deregClearToasts) scope.deregClearToasts();
+                if (scope.deregNewToast) scope.deregNewToast();
+                scope.deregClearToasts=null;
+                scope.deregNewToast=null;
+            });
+
             scope.configureTimer = function configureTimer(toast) {
                 var timeout = typeof (toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
                 if (timeout > 0)
@@ -139,11 +149,11 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
             }
 
             scope.toasters = [];
-            $rootScope.$on('toaster-newToast', function () {
+            scope.deregNewToast = $rootScope.$on('toaster-newToast', function () {
                 addToast(toaster.toast);
             });
 
-            $rootScope.$on('toaster-clearToasts', function () {
+            scope.deregClearToasts = $rootScope.$on('toaster-clearToasts', function () {
                 scope.toasters.splice(0, scope.toasters.length);
             });
         },
