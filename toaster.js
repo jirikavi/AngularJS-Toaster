@@ -123,7 +123,8 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
                         toast.html = $sce.trustAsHtml(toast.body);
                         break;
                     case 'template':
-                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                        toast.bodyTemplate = toast.body.template || toast.body || mergedConfig['body-template'];
+                        toast.data = toast.body.data || undefined;
                         break;
                 }
 
