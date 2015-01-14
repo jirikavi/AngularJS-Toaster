@@ -82,8 +82,33 @@ angular.module('toaster', ['ngAnimate'])
                      })(type);
     }
 }])
-.directive('toasterContainer', ['$compile', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster',
-function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
+.factory('toasterRegisterEvents', function() {
+  
+  var toasterFactory = {
+      _NewToastEvent: false,
+      _ClearAllToastsEvent: false,
+      registerNewToastEvent: function(){
+        this._NewToastEvent = true;
+      },
+      registerClearAllToastsEvent: function(){
+        this._ClearAllToastsEvent = true;
+      },
+      isRegisteredNewToastEvent: function(){
+        return this._NewToastEvent;
+      },
+      isRegisteredClearAllToastsEvent: function(){
+        return this._ClearAllToastsEvent;
+      }
+    }
+    return {
+      registerNewToastEvent: toasterFactory.registerNewToastEvent,
+      registerClearAllToastsEvent: toasterFactory.registerClearAllToastsEvent,
+      isRegisteredNewToastEvent: toasterFactory.isRegisteredNewToastEvent,
+      isRegisteredClearAllToastsEvent: toasterFactory.isRegisteredClearAllToastsEvent
+  }
+})
+.directive('toasterContainer', ['$compile', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster', 'toasterRegisterEvents',
+function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRegisterEvents) {
     return {
         replace: true,
         restrict: 'EA',
@@ -165,13 +190,20 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster) {
             }
 
             scope.toasters = [];
-            scope.deregNewToast = $rootScope.$on('toaster-newToast', function () {
-                addToast(toaster.toast);
-            });
+            
+            if(!toasterRegisterEvents.isRegisteredNewToastEvent()){
+                toasterRegisterEvents.registerNewToastEvent();
+                scope.deregNewToast = $rootScope.$on('toaster-newToast', function () {
+                    addToast(toaster.toast);
+              });
+            }
 
-            scope.deregClearToasts = $rootScope.$on('toaster-clearToasts', function () {
-                scope.toasters.splice(0, scope.toasters.length);
-            });
+            if(!toasterRegisterEvents.isRegisteredClearAllToastsEvent()){
+                toasterRegisterEvents.registerClearAllToastsEvent();
+                scope.deregClearToasts = $rootScope.$on('toaster-clearToasts', function () {
+                    scope.toasters.splice(0, scope.toasters.length);
+              });
+            }
         },
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
 
