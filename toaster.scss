@@ -8,7 +8,42 @@
  *
  * Author: John Papa and Hans Fjällemark
  * Project: https://github.com/CodeSeven/toastr
+ *
+ *
+ * SCSS File
+ * Author: Damian Szymczuk
+ * GitHub: https://github.com/dszymczuk
+ *
  */
+
+
+/* Variables */
+$textColor: #ffffff;
+$textColorHover: #cccccc;
+$closeButton: #ffffff;
+$closeButtonHover: #000000;
+
+$fontSize: 20px;
+
+$toast: #030303;
+$toastSuccess: #51a351;
+$toastError: #bd362f;
+$toastInfo: #2f96b4;
+$toastWarning: #f89406;
+
+
+$toastPositionFullWidthTop: 0;
+$toastPositionFullWidthBottom: 0;
+
+$toastPossitionTop: 12px;
+$toastPossitionLeft: 12px;
+$toastPossitionRight: 12px;
+$toastPossitionBottom: 12px;
+
+$toastContainerColor: #ffffff;
+$toastContainerShadowColor: #999999;
+$toastContainerShadowColorHover: #000000;
+
 
 .toast-title {
   font-weight: bold;
@@ -18,10 +53,10 @@
   -ms-word-wrap: break-word;
   word-wrap: break-word;
   a, label {
-    color: #ffffff;
+    color: $textColor;
   }
   a:hover {
-    color: #cccccc;
+    color: $textColorHover;
     text-decoration: none;
   }
 }
@@ -31,16 +66,16 @@
   right: -0.3em;
   top: -0.3em;
   float: right;
-  font-size: 20px;
+  font-size: $fontSize;
   font-weight: bold;
-  color: #ffffff;
-  -webkit-text-shadow: 0 1px 0 #ffffff;
-  text-shadow: 0 1px 0 #ffffff;
+  color: $closeButton;
+  -webkit-text-shadow: 0 1px 0 $closeButton;
+  text-shadow: 0 1px 0 $closeButton;
   opacity: 0.8;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   filter: alpha(opacity = 80);
   &:hover, &:focus {
-    color: #000000;
+    color: $closeButtonHover;
     text-decoration: none;
     cursor: pointer;
     opacity: 0.4;
@@ -62,43 +97,43 @@ button.toast-close-button {
 }
 
 .toast-top-full-width {
-  top: 0;
+  top: $toastPositionFullWidthTop;
   right: 0;
   width: 100%;
 }
 
 .toast-bottom-full-width {
-  bottom: 0;
+  bottom: $toastPositionFullWidthBottom;
   right: 0;
   width: 100%;
 }
 
 .toast-top-left {
-  top: 12px;
-  left: 12px;
+  top: $toastPossitionTop;
+  left: $toastPossitionLeft;
 }
 
 .toast-top-center {
-  top: 12px;
+  top: $toastPossitionTop;
 }
 
 .toast-top-right {
-  top: 12px;
-  right: 12px;
+  top: $toastPossitionTop;
+  right: $toastPossitionRight;
 }
 
 .toast-bottom-right {
-  right: 12px;
-  bottom: 12px;
+  right: $toastPossitionRight;
+  bottom: $toastPossitionBottom;
 }
 
 .toast-bottom-center {
-  bottom: 12px;
+  bottom: $toastPossitionBottom;
 }
 
 .toast-bottom-left {
-  bottom: 12px;
-  left: 12px;
+  bottom: $toastPossitionBottom;
+  left: $toastPossitionLeft;
 }
 
 .toast-center {
@@ -135,18 +170,18 @@ button.toast-close-button {
       border-radius: 3px 3px 3px 3px;
       background-position: 15px center;
       background-repeat: no-repeat;
-      -moz-box-shadow: 0 0 12px #999999;
-      -webkit-box-shadow: 0 0 12px #999999;
-      box-shadow: 0 0 12px #999999;
-      color: #ffffff;
+      -moz-box-shadow: 0 0 12px $toastContainerShadowColor;
+      -webkit-box-shadow: 0 0 12px $toastContainerShadowColor;
+      box-shadow: 0 0 12px $toastContainerShadowColor;
+      color: $toastContainerColor;
       opacity: 0.8;
       -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
       filter: alpha(opacity = 80);
     }
     :hover {
-      -moz-box-shadow: 0 0 12px #000000;
-      -webkit-box-shadow: 0 0 12px #000000;
-      box-shadow: 0 0 12px #000000;
+      -moz-box-shadow: 0 0 12px $toastContainerShadowColorHover;
+      -webkit-box-shadow: 0 0 12px $toastContainerShadowColorHover;
+      box-shadow: 0 0 12px $toastContainerShadowColorHover;
       opacity: 1;
       -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
       filter: alpha(opacity = 100);
@@ -175,23 +210,23 @@ button.toast-close-button {
 }
 
 .toast {
-  background-color: #030303;
+  background-color: $toast;
 }
 
 .toast-success {
-  background-color: #51a351;
+  background-color: $toastSuccess;
 }
 
 .toast-error {
-  background-color: #bd362f;
+  background-color: $toastError;
 }
 
 .toast-info, .toast-wait {
-  background-color: #2f96b4;
+  background-color: $toastInfo;
 }
 
 .toast-warning {
-  background-color: #f89406;
+  background-color: $toastWarning;
 }
 
 /*Responsive Design*/
