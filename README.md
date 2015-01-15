@@ -4,11 +4,11 @@ AngularJS-Toaster
 **AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations. 
 (I would suggest to use /1.2.8/angular-animate.js, there is a weird blinking in newer versions.)
 
-### Current Version 0.4.9
+### Current Version 0.4.10
 
 ## Demo
-- Simple demo is at http://plnkr.co/edit/1poa9A
-- Older versions are http://plnkr.co/edit/4qpHwp or http://plnkr.co/edit/lzYaZt (with version 0.4.5)
+- Simple demo is at http://plnkr.co/edit/HKTC1a
+- Older versions are http://plnkr.co/edit/1poa9A or http://plnkr.co/edit/4qpHwp or http://plnkr.co/edit/lzYaZt (with version 0.4.5)
 - Older version with Angular 1.2.0 is placed at http://plnkr.co/edit/mejR4h
 - Older version with Angular 1.2.0-rc.2 is placed at http://plnkr.co/edit/iaC2NY
 - Older version with Angular 1.1.5 is placed at http://plnkr.co/mVR4P4
