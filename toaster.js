@@ -33,7 +33,7 @@ angular.module('toaster', ['ngAnimate'])
         success: 'toast-success',
         warning: 'toast-warning'
     },
-    'body-output-type': '', // Options: '', 'trustedHtml', 'template'
+    'body-output-type': '',// Options: '', 'trustedHtml', 'template', 'templateWithData'
     'body-template': 'toasterBodyTmpl.html',
     'icon-class': 'toast-info',
     'position-class': 'toast-top-right',
@@ -107,8 +107,8 @@ angular.module('toaster', ['ngAnimate'])
       isRegisteredClearAllToastsEvent: toasterFactory.isRegisteredClearAllToastsEvent
   }
 })
-.directive('toasterContainer', ['$compile', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster', 'toasterRegisterEvents',
-function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRegisterEvents) {
+.directive('toasterContainer', ['$parse', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster', 'toasterRegisterEvents',
+function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRegisterEvents) {
     return {
         replace: true,
         restrict: 'EA',
@@ -162,6 +162,12 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster, toaster
                         break;
                     case 'template':
                         toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                        break;
+                    case 'templateWithData':
+                        var fcGet = $parse(toast.body || mergedConfig['body-template']);
+                        var templateWithData = fcGet(scope);
+                        toast.bodyTemplate = templateWithData.template;
+                        toast.data = templateWithData.data;
                         break;
                 }
 
@@ -265,6 +271,7 @@ function ($compile, $rootScope, $interval, $sce, toasterConfig, toaster, toaster
               '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                 '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
                 '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
+                '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
                 '<div ng-switch-default >{{toaster.body}}</div>' +
               '</div>' +
             '</div>' +
