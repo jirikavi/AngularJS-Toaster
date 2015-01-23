@@ -109,8 +109,8 @@ angular.module('toaster', ['ngAnimate'])
     return {
       registerNewToastEvent: toasterFactory.registerNewToastEvent,
       registerClearAllToastsEvent: toasterFactory.registerClearAllToastsEvent,
-		deregisterNewToastEvent: toasterFactory.deregisterNewToastEvent,
-		deregisterClearAllToastsEvent: toasterFactory.deregisterClearAllToastsEvent,
+      deregisterNewToastEvent: toasterFactory.deregisterNewToastEvent,
+      deregisterClearAllToastsEvent: toasterFactory.deregisterClearAllToastsEvent,
       isRegisteredNewToastEvent: toasterFactory.isRegisteredNewToastEvent,
       isRegisteredClearAllToastsEvent: toasterFactory.isRegisteredClearAllToastsEvent
   }
@@ -145,8 +145,8 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRe
                 if (scope.deregNewToast) scope.deregNewToast();
                 scope.deregClearToasts=null;
                 scope.deregNewToast=null;
-				toasterRegisterEvents.deregisterNewToastEvent();
-				toasterRegisterEvents.deregisterClearAllToastsEvent();
+                toasterRegisterEvents.deregisterNewToastEvent();
+                toasterRegisterEvents.deregisterClearAllToastsEvent();
             });
 
             scope.configureTimer = function configureTimer(toast) {
