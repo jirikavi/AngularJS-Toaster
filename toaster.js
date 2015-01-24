@@ -93,6 +93,12 @@ angular.module('toaster', ['ngAnimate'])
       registerClearAllToastsEvent: function(){
         this._ClearAllToastsEvent = true;
       },
+      deregisterNewToastEvent: function(){
+        this._NewToastEvent = false;
+      },
+      deregisterClearAllToastsEvent: function(){
+        this._ClearAllToastsEvent = false;
+      },
       isRegisteredNewToastEvent: function(){
         return this._NewToastEvent;
       },
@@ -103,6 +109,8 @@ angular.module('toaster', ['ngAnimate'])
     return {
       registerNewToastEvent: toasterFactory.registerNewToastEvent,
       registerClearAllToastsEvent: toasterFactory.registerClearAllToastsEvent,
+      deregisterNewToastEvent: toasterFactory.deregisterNewToastEvent,
+      deregisterClearAllToastsEvent: toasterFactory.deregisterClearAllToastsEvent,
       isRegisteredNewToastEvent: toasterFactory.isRegisteredNewToastEvent,
       isRegisteredClearAllToastsEvent: toasterFactory.isRegisteredClearAllToastsEvent
   }
@@ -114,7 +122,6 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRe
         restrict: 'EA',
         scope: true, // creates an internal scope for this directive
         link: function (scope, elm, attrs) {
-
             var id = 0,
                 mergedConfig;
 
@@ -138,6 +145,8 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRe
                 if (scope.deregNewToast) scope.deregNewToast();
                 scope.deregClearToasts=null;
                 scope.deregNewToast=null;
+                toasterRegisterEvents.deregisterNewToastEvent();
+                toasterRegisterEvents.deregisterClearAllToastsEvent();
             });
 
             scope.configureTimer = function configureTimer(toast) {
