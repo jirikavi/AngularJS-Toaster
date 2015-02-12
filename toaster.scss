@@ -18,31 +18,31 @@
 
 
 /* Variables */
-$textColor: #ffffff;
-$textColorHover: #cccccc;
-$closeButton: #ffffff;
-$closeButtonHover: #000000;
+$textColor: #ffffff !default;
+$textColorHover: #cccccc !default;
+$closeButton: #ffffff !default;
+$closeButtonHover: #000000 !default;
 
-$fontSize: 20px;
+$fontSize: 20px !default;
 
-$toast: #030303;
-$toastSuccess: #51a351;
-$toastError: #bd362f;
-$toastInfo: #2f96b4;
-$toastWarning: #f89406;
+$toast: #030303 !default;
+$toastSuccess: #51a351 !default;
+$toastError: #bd362f !default;
+$toastInfo: #2f96b4 !default;
+$toastWarning: #f89406 !default;
 
 
-$toastPositionFullWidthTop: 0;
-$toastPositionFullWidthBottom: 0;
+$toastPositionFullWidthTop: 0 !default;
+$toastPositionFullWidthBottom: 0 !default;
 
-$toastPossitionTop: 12px;
-$toastPossitionLeft: 12px;
-$toastPossitionRight: 12px;
-$toastPossitionBottom: 12px;
+$toastPossitionTop: 12px !default;
+$toastPossitionLeft: 12px !default;
+$toastPossitionRight: 12px !default;
+$toastPossitionBottom: 12px !default;
 
-$toastContainerColor: #ffffff;
-$toastContainerShadowColor: #999999;
-$toastContainerShadowColorHover: #000000;
+$toastContainerColor: #ffffff !default;
+$toastContainerShadowColor: #999999 !default;
+$toastContainerShadowColorHover: #000000 !default;
 
 
 .toast-title {
