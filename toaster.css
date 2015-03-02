@@ -158,7 +158,7 @@ button.toast-close-button {
     animation: toast-wait-spinning 6s infinite ease-in-out;
 }
 
-@-webkit-keyframes spinny {
+@-webkit-keyframes toast-wait-spinning {
     0%    { -webkit-transform: rotate(0deg);}
     12.5% { -webkit-transform: rotate(-405deg); }
     25%   { -webkit-transform: rotate(-810deg); }
@@ -170,7 +170,7 @@ button.toast-close-button {
     100%  { -webkit-transform: rotate(-3240deg); }
 }
 
-@-moz-keyframes spinny {
+@-moz-keyframes toast-wait-spinning {
     0%    { -moz-transform: rotate(0deg);}
     12.5% { -moz-transform: rotate(-405deg); }
     25%   { -moz-transform: rotate(-810deg); }
@@ -182,7 +182,7 @@ button.toast-close-button {
     100%  { -moz-transform: rotate(-3240deg); }
 }
 
-@keyframes spinny {
+@keyframes toast-wait-spinning {
     0%    { transform: rotate(0deg);}
     12.5% { transform: rotate(-405deg); }
     25%   { transform: rotate(-810deg); }
