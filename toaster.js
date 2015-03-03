@@ -39,6 +39,7 @@ angular.module('toaster', ['ngAnimate'])
     'position-class': 'toast-top-right',
     'title-class': 'toast-title',
     'message-class': 'toast-message',
+    'prevent-duplicates': false,
     'mouseover-timer-stop': true // stop timeout on mouseover and restart timer on mouseout
 })
 .service('toaster', ['$rootScope', 'toasterConfig', function ($rootScope, toasterConfig) {
@@ -156,9 +157,16 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRe
             };
 
             function addToast(toast) {
+
                 toast.type = mergedConfig['icon-classes'][toast.type];
                 if (!toast.type)
                     toast.type = mergedConfig['icon-class'];
+
+                // Prevent adding duplicate toasts if it's set
+                if (mergedConfig['prevent-duplicates'] === true && 
+                    scope.toasters.length > 0 && 
+                    scope.toasters[scope.toasters.length - 1].body === toast.body)
+                    return;
 
                 id++;
                 angular.extend(toast, { id: id });
