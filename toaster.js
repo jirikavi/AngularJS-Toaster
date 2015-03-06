@@ -220,8 +220,6 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
                         scope.toasters.shift();
                     }
                 }
-
-                toast.mouseover = false;
             }
 
             scope.toasters = [];
@@ -243,7 +241,6 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
         controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
             // Called on mouseover
             $scope.stopTimer = function (toast) {
-                toast.mouseover = true;
                 if ($scope.config.mouseoverTimer === true) {
                     if (toast.timeoutPromise) {
                         $interval.cancel(toast.timeoutPromise);
@@ -254,7 +251,6 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
 
             // Called on mouseout
             $scope.restartTimer = function (toast) {
-                toast.mouseover = false;
                 if ($scope.config.mouseoverTimer === true) {
                     if (!toast.timeoutPromise)
                         $scope.configureTimer(toast);
@@ -265,7 +261,7 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
 
             $scope.removeToast = function (id) {
                 var i = 0;
-                for (i; i < $scope.toasters.length; i++) {
+                for (; i < $scope.toasters.length; i++) {
                     if ($scope.toasters[i].id === id) {
                         $scope.toasters.splice(i, 1);
                         break;
