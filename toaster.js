@@ -166,7 +166,6 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
 
             function setTimeout(toast, time) {
                 toast.timeoutPromise = $interval(function () {
-                    $interval.cancel(toast.timeoutPromise);
                     scope.removeToast(toast.id);
                 }, time, 1);
             }
@@ -222,6 +221,32 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
                 }
             }
 
+            scope.removeToast = function (id) {
+                var i, len, toast;
+                for (i = 0, len = scope.toasters.length; i < len; i++) {
+                    if (scope.toasters[i].id === id) {
+                        removeToast(i);
+                        break;
+                    }
+                }
+            };
+
+            function removeToast(toastIndex) {
+                var toast = scope.toasters[toastIndex];
+                if (toast) {
+                    if (toast.timeoutPromise) {
+                        $interval.cancel(toast.timeoutPromise);
+                    }
+                    scope.toasters.splice(toastIndex, 1);
+                }
+            }
+
+            function removeAllToasts() {
+                for (var i = scope.toasters.length; i >= 0; i--) {
+                    removeToast(i);
+                }
+            }
+
             scope.toasters = [];
 
             scope._onNewToast = function (event, toasterId) {
@@ -233,7 +258,7 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
                     addToast(toaster.toast);
             };
             scope._onClearToasts = function (event) {
-                scope.toasters.splice(0, scope.toasters.length);
+                removeAllToasts();
             };
             toasterEventRegistry.subscribeToNewToastEvent(scope._onNewToast);
             toasterEventRegistry.subscribeToClearToastsEvent(scope._onClearToasts);
@@ -256,16 +281,6 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
                         $scope.configureTimer(toast);
                 } else if (toast.timeoutPromise === null) {
                     $scope.removeToast(toast.id);
-                }
-            };
-
-            $scope.removeToast = function (id) {
-                var i = 0;
-                for (; i < $scope.toasters.length; i++) {
-                    if ($scope.toasters[i].id === id) {
-                        $scope.toasters.splice(i, 1);
-                        break;
-                    }
                 }
             };
 
