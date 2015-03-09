@@ -95,18 +95,25 @@ angular.module('toaster', ['ngAnimate'])
         clearToastsEventSubscribers = [],
         toasterFactory;
 
-    deregisterNewToast = $rootScope.$on('toaster-newToast', function (event, toasterId) {
-        for (var i = 0, len = newToastEventSubscribers.length; i < len; i++) {
-            newToastEventSubscribers[i](event, toasterId);
-        }
-    });
-    deregisterClearToasts = $rootScope.$on('toaster-clearToasts', function (event) {
-        for (var i = 0, len = clearToastsEventSubscribers.length; i < len; i++) {
-            clearToastsEventSubscribers[i](event);
-        }
-    });
-
     toasterFactory = {
+        setup: function () {
+            if (!deregisterNewToast) {
+                deregisterNewToast = $rootScope.$on('toaster-newToast', function (event, toasterId) {
+                    for (var i = 0, len = newToastEventSubscribers.length; i < len; i++) {
+                        newToastEventSubscribers[i](event, toasterId);
+                    }
+                });
+            }
+
+            if (!deregisterClearToasts) {
+                deregisterClearToasts = $rootScope.$on('toaster-clearToasts', function (event) {
+                    for (var i = 0, len = clearToastsEventSubscribers.length; i < len; i++) {
+                        clearToastsEventSubscribers[i](event);
+                    }
+                });
+            }
+        },
+
         subscribeToNewToastEvent: function(onNewToast) {
             newToastEventSubscribers.push(onNewToast);
         },
@@ -117,18 +124,25 @@ angular.module('toaster', ['ngAnimate'])
             var index = newToastEventSubscribers.indexOf(onNewToast);
             if (index >= 0)
                 newToastEventSubscribers.splice(index, 1);
-            if (newToastEventSubscribers.length === 0)
+
+            if (newToastEventSubscribers.length === 0) {
                 deregisterNewToast();
+                deregisterNewToast = null;
+            }
         },
         unsubscribeToClearToastsEvent: function(onClearToasts) {
             var index = clearToastsEventSubscribers.indexOf(onClearToasts);
             if (index >= 0)
                 clearToastsEventSubscribers.splice(index, 1);
-            if (clearToastsEventSubscribers.length === 0)
+
+            if (clearToastsEventSubscribers.length === 0) {
                 deregisterClearToasts();
+                deregisterClearToasts = null;
+            }
         }
     };
     return {
+        setup: toasterFactory.setup,
         subscribeToNewToastEvent: toasterFactory.subscribeToNewToastEvent,
         subscribeToClearToastsEvent: toasterFactory.subscribeToClearToastsEvent,
         unsubscribeToNewToastEvent: toasterFactory.unsubscribeToNewToastEvent,
@@ -260,6 +274,9 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
             scope._onClearToasts = function (event) {
                 removeAllToasts();
             };
+
+            toasterEventRegistry.setup();
+
             toasterEventRegistry.subscribeToNewToastEvent(scope._onNewToast);
             toasterEventRegistry.subscribeToClearToastsEvent(scope._onClearToasts);
         },
