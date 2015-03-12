@@ -88,7 +88,7 @@ angular.module('toaster', ['ngAnimate'])
         })(type);
     }
 }])
-.factory('toasterEventRegistry', function($rootScope) {
+.factory('toasterEventRegistry',['$rootScope', function($rootScope) {
     var deregisterNewToast = null,
         deregisterClearToasts = null,
         newToastEventSubscribers = [],
@@ -148,7 +148,7 @@ angular.module('toaster', ['ngAnimate'])
         unsubscribeToNewToastEvent: toasterFactory.unsubscribeToNewToastEvent,
         unsubscribeToClearToastsEvent: toasterFactory.unsubscribeToClearToastsEvent
     };
-})
+}])
 .directive('toasterContainer', ['$parse', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster', 'toasterEventRegistry',
 function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEventRegistry) {
     return {
