@@ -322,7 +322,7 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEv
         template:
         '<div id="toast-container" ng-class="[config.position, config.animation]">' +
           '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
-            '<button class="toast-close-button" ng-show="config.closeButton" ng-click="click(toaster, true)">&times;</button>' +
+            '<button type="button" class="toast-close-button" ng-show="config.closeButton" ng-click="click(toaster, true)">&times;</button>' +
             '<div ng-class="config.title">{{toaster.title}}</div>' +
             '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
               '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
