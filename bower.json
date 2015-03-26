@@ -3,7 +3,9 @@
   "version": "0.4.11",
   "main": [
     "toaster.js",
-    "toaster.css"
+    "toaster.css",
+    "toaster.min.js",
+    "toaster.min.css"
   ],
   "ignore": [
     "**/.*",
