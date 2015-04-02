@@ -3,7 +3,7 @@
 
 /*
  * AngularJS Toaster
- * Version: 0.4.11
+ * Version: 0.4.12
  *
  * Copyright 2013-2014 Jiri Kavulak.
  * All Rights Reserved.

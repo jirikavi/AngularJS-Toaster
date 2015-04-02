@@ -1,6 +1,6 @@
 {
   "name": "AngularJS-Toaster",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "AngularJS Toaster is a customized version of toastr non-blocking notification javascript library",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

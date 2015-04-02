@@ -113,7 +113,7 @@ button.toast-close-button {
   pointer-events: auto;
 }
 #toast-container.toast-center > button,
-#toast-container.toast-top-cente > button,
+#toast-container.toast-top-center > button,
 #toast-container.toast-bottom-center > button{
   pointer-events: auto;
 }
