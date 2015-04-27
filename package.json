@@ -1,5 +1,5 @@
 {
-  "name": "AngularJS-Toaster",
+  "name": "angularjs-toaster",
   "version": "0.4.12",
   "description": "AngularJS Toaster is a customized version of toastr non-blocking notification javascript library",
   "scripts": {
