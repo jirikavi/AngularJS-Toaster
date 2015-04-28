@@ -19,7 +19,10 @@ Optionally: to install with bower, use:
 ```
 bower install --save angularjs-toaster
 ```
-
+or with npm :
+```
+npm install --save angularjs-toaster
+```
 * Link scripts:
 
 ```html
