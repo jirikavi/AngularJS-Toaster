@@ -107,3 +107,24 @@ Copyright © 2013 [Jiri Kavulak](https://twitter.com/jirikavi).
 
 ## License 
 AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php
+
+##Changes Log
+## v0.4.13
+- Add option in function toaster.pop() , `toastId` to define 'uid', use the function 'toaster.clear ()'
+
+```js
+var _toaster = {
+                    type:      null,
+                    title:     null,
+                    body:      null,
+                    timeout:   null,
+                    toasterId: 'CategoryMenu',
+                    toastId:   'CategoryMenuAlert'
+                }
+```
+
+- Add option in function toaster.clear()
+ * toaster.clear(); --> clearAll with ToasterId = Undifined;
+ * toaster.clear('*'); -> ClearAll()
+ * toaster.clear('clearID'); -> clearAll() with toaster have ToasterId = 'clearID'
+* toaster.clear('clearID', 'toastID'); -> Just clearAll with toasts have uid = 'toastID' in  ToasterId = 'clearID'.
