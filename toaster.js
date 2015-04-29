@@ -253,7 +253,7 @@
 
                             toast.id = ++id;
                             // Sure uid defined
-                            if (typeof toastId !== "undefined" && toastId !== null) {
+                            if (!isUndefinedOrNull(toastId)) {
                                 toast.uid = toastId;
                             }
 
@@ -332,7 +332,7 @@
 
                         function removeAllToasts(toastId) {
                             for (var i = scope.toasters.length - 1; i >= 0; i--) {
-                                if (angular.isUndefined(toastId) || toastId === null) {
+                                if (isUndefinedOrNull(toastId)) {
                                     removeToast(i);
                                 } else {
                                     if (scope.toasters[i].uid == toastId) {
@@ -360,7 +360,6 @@
                             // Compatibility: if toaster has no toasterId defined, and if call to display
                             // hasn't either, then the request is for us
                             if (toasterId == '*' || (isUndefinedOrNull(scope.config.toasterId) && isUndefinedOrNull(toasterId)) || (!isUndefinedOrNull(scope.config.toasterId) && !isUndefinedOrNull(toasterId) && scope.config.toasterId == toasterId)) {
-                                console.log(toasterId);
                                 removeAllToasts(toastId);
                             }
                         };
