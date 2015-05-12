@@ -47,8 +47,8 @@
             'icon-class':           'toast-info',
             'position-class':       'toast-top-right', // Options (see CSS):
                                                        // 'toast-top-full-width', 'toast-bottom-full-width', 'toast-center',
-                                                       // 'toast-top-left', 'toast-top-center', 'toast-top-rigt',
-                                                       // 'toast-bottom-left', 'toast-bottom-center', 'toast-bottom-rigt',
+                                                       // 'toast-top-left', 'toast-top-center', 'toast-top-right',
+                                                       // 'toast-bottom-left', 'toast-bottom-center', 'toast-bottom-right',
             'title-class':          'toast-title',
             'message-class':        'toast-message',
             'prevent-duplicates':   false,
