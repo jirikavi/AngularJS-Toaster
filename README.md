@@ -4,7 +4,7 @@ AngularJS-Toaster
 **AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations. 
 (I would suggest to use /1.2.8/angular-animate.js, there is a weird blinking in newer versions.)
 
-### Current Version 0.4.10
+### Current Version 0.4.13
 
 ## Demo
 - Simple demo is at http://plnkr.co/edit/HKTC1a
@@ -19,7 +19,10 @@ Optionally: to install with bower, use:
 ```
 bower install --save angularjs-toaster
 ```
-
+or with npm :
+```
+npm install --save angularjs-toaster
+```
 * Link scripts:
 
 ```html
@@ -104,3 +107,24 @@ Copyright © 2013 [Jiri Kavulak](https://twitter.com/jirikavi).
 
 ## License 
 AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php
+
+##Changes Log
+## v0.4.13
+- Add option in function toaster.pop() , `toastId` to define 'uid', use the function 'toaster.clear ()'
+
+```js
+var _toaster = {
+                    type:      null,
+                    title:     null,
+                    body:      null,
+                    timeout:   null,
+                    toasterId: 'CategoryMenu',
+                    toastId:   'CategoryMenuAlert'
+                }
+```
+
+- Add option in function toaster.clear()
+ * toaster.clear(); --> clearAll with ToasterId = Undifined;
+ * toaster.clear('*'); -> ClearAll()
+ * toaster.clear('clearID'); -> clearAll() with toaster have ToasterId = 'clearID'
+* toaster.clear('clearID', 'toastID'); -> Just clearAll with toasts have uid = 'toastID' in  ToasterId = 'clearID'.
