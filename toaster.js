@@ -151,6 +151,7 @@ function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRe
 
             scope.configureTimer = function configureTimer(toast) {
                 var timeout = typeof (toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+                if (typeof timeout === "object") timeout = timeout[toast.type];
                 if (timeout > 0)
                     setTimeout(toast, timeout);
             };
