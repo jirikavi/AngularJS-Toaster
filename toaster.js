@@ -1,5 +1,189 @@
 (function () {
+<<<<<<< HEAD
     'use strict';
+=======
+'use strict';
+
+/*
+ * AngularJS Toaster
+ * Version: 0.4.10
+ *
+ * Copyright 2013 Jiri Kavulak.  
+ * All Rights Reserved.  
+ * Use, reproduction, distribution, and modification of this code is subject to the terms and 
+ * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
+ *
+ * Author: Jiri Kavulak
+ * Related to project of John Papa and Hans Fjällemark
+ */
+
+angular.module('toaster', ['ngAnimate'])
+.constant('toasterConfig', {
+    'limit': 0,                   // limits max number of toasts 
+    'tap-to-dismiss': true,
+    'close-button': false,
+    'newest-on-top': true,
+    //'fade-in': 1000,            // done in css
+    //'on-fade-in': undefined,    // not implemented
+    //'fade-out': 1000,           // done in css
+    // 'on-fade-out': undefined,  // not implemented
+    //'extended-time-out': 1000,    // not implemented
+    'time-out': 5000, // Set timeOut and extendedTimeout to 0 to make it sticky
+    'icon-classes': {
+        error: 'toast-error',
+        info: 'toast-info',
+        wait: 'toast-wait',
+        success: 'toast-success',
+        warning: 'toast-warning'
+    },
+    'body-output-type': '',// Options: '', 'trustedHtml', 'template', 'templateWithData'
+    'body-template': 'toasterBodyTmpl.html',
+    'icon-class': 'toast-info',
+    'position-class': 'toast-top-right',
+    'title-class': 'toast-title',
+    'message-class': 'toast-message',
+    'mouseover-timer-stop': true // stop timeout on mouseover and restart timer on mouseout
+})
+.service('toaster', ['$rootScope', 'toasterConfig', function ($rootScope, toasterConfig) {
+    this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler) {
+        if (angular.isObject(type)) {
+            var params = type; // NOTE: anable parameters as pop argument
+            this.toast = {
+                type: params.type,
+                title: params.title,
+                body: params.body,
+                timeout: params.timeout,
+                bodyOutputType: params.bodyOutputType,
+                clickHandler: params.clickHandler
+            };
+        }
+        else {
+            this.toast = {
+                type: type,
+                title: title,
+                body: body,
+                timeout: timeout,
+                bodyOutputType: bodyOutputType,
+                clickHandler: clickHandler
+            };
+        }
+        $rootScope.$emit('toaster-newToast');
+    };
+
+    this.clear = function () {
+        $rootScope.$emit('toaster-clearToasts');
+    };
+    
+    for (var type in toasterConfig['icon-classes']) {
+    this[type] = (function (toasterType){ 
+                    return function(title, body, timeout, bodyOutputType, clickHandler) {
+                                if (angular.isString(title))
+                                    this.pop(toasterType, title, body, timeout, bodyOutputType, clickHandler);
+                                else 
+                                    this.pop(angular.extend(title, {type: toasterType}));
+                               }
+                     })(type);
+    }
+}])
+.factory('toasterRegisterEvents', function() {
+  
+  var toasterFactory = {
+      _NewToastEvent: false,
+      _ClearAllToastsEvent: false,
+      registerNewToastEvent: function(){
+        this._NewToastEvent = true;
+      },
+      registerClearAllToastsEvent: function(){
+        this._ClearAllToastsEvent = true;
+      },
+      deregisterNewToastEvent: function(){
+        this._NewToastEvent = false;
+      },
+      deregisterClearAllToastsEvent: function(){
+        this._ClearAllToastsEvent = false;
+      },
+      isRegisteredNewToastEvent: function(){
+        return this._NewToastEvent;
+      },
+      isRegisteredClearAllToastsEvent: function(){
+        return this._ClearAllToastsEvent;
+      }
+    }
+    return {
+      registerNewToastEvent: toasterFactory.registerNewToastEvent,
+      registerClearAllToastsEvent: toasterFactory.registerClearAllToastsEvent,
+      deregisterNewToastEvent: toasterFactory.deregisterNewToastEvent,
+      deregisterClearAllToastsEvent: toasterFactory.deregisterClearAllToastsEvent,
+      isRegisteredNewToastEvent: toasterFactory.isRegisteredNewToastEvent,
+      isRegisteredClearAllToastsEvent: toasterFactory.isRegisteredClearAllToastsEvent
+  }
+})
+.directive('toasterContainer', ['$parse', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster', 'toasterRegisterEvents',
+function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterRegisterEvents) {
+    return {
+        replace: true,
+        restrict: 'EA',
+        scope: true, // creates an internal scope for this directive
+        link: function (scope, elm, attrs) {
+            var id = 0,
+                mergedConfig;
+
+            mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
+
+            scope.config = {
+                position: mergedConfig['position-class'],
+                title: mergedConfig['title-class'],
+                message: mergedConfig['message-class'],
+                tap: mergedConfig['tap-to-dismiss'],
+                closeButton: mergedConfig['close-button'],
+                animation: mergedConfig['animation-class'],
+                mouseoverTimer:  mergedConfig['mouseover-timer-stop']
+            };
+
+            scope.deregClearToasts = null;
+            scope.deregNewToast = null;
+
+            scope.$on("$destroy",function () {
+                if (scope.deregClearToasts) scope.deregClearToasts();
+                if (scope.deregNewToast) scope.deregNewToast();
+                scope.deregClearToasts=null;
+                scope.deregNewToast=null;
+                toasterRegisterEvents.deregisterNewToastEvent();
+                toasterRegisterEvents.deregisterClearAllToastsEvent();
+            });
+
+            scope.configureTimer = function configureTimer(toast) {
+                var timeout = typeof (toast.timeout) == "number" ? toast.timeout : mergedConfig['time-out'];
+                if (typeof timeout === "object") timeout = timeout[toast.type];
+                if (timeout > 0)
+                    setTimeout(toast, timeout);
+            };
+
+            function addToast(toast) {
+                toast.type = mergedConfig['icon-classes'][toast.type];
+                if (!toast.type)
+                    toast.type = mergedConfig['icon-class'];
+
+                id++;
+                angular.extend(toast, { id: id });
+
+                // Set the toast.bodyOutputType to the default if it isn't set
+                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
+                switch (toast.bodyOutputType) {
+                    case 'trustedHtml':
+                        toast.html = $sce.trustAsHtml(toast.body);
+                        break;
+                    case 'template':
+                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                        break;
+                    case 'templateWithData':
+                        var fcGet = $parse(toast.body || mergedConfig['body-template']);
+                        var templateWithData = fcGet(scope);
+                        toast.bodyTemplate = templateWithData.template;
+                        toast.data = templateWithData.data;
+                        break;
+                }
+>>>>>>> 941535b999782832fec7a73f499d36c952149e49
 
     /*
      * AngularJS Toaster
