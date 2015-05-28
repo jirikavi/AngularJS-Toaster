@@ -99,7 +99,7 @@ This option is given the most weight and will override the global configurations
 Unlike toastr, this library relies on ngAnimate and CSS3 transformations for optional animations.  To include and use animations, add a reference to angular-animate.min.js (as described in Getting started - Link scripts) and add ngAnimate as a dependency alongside toaster. 
 
 ```js
-// Display an info toast with no title
+// Inject ngAnimate to enable animations
 angular.module('main', ['toaster', 'ngAnimate']);
 ```
 If you do not want to use animations, you can safely remove the angular-animate.min.js reference as well as the injection of ngAnimate.  Toasts will be displayed without animations.
