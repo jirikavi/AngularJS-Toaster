@@ -41,8 +41,8 @@ npm install --save angularjs-toaster
 * Prepare the call of toaster method:
 
 ```js
-	// Display an info toast with no title
-	angular.module('main', ['toaster'])
+// Display an info toast with no title
+angular.module('main', ['toaster', 'ngAnimate'])
 	.controller('myController', function($scope, toaster) {
 	    $scope.pop = function(){
 	        toaster.pop('success', "title", "text");
@@ -70,7 +70,9 @@ The Close Button's visibility can be configured at three different levels:
 * Per info-class type:
 By passing the close-button configuration as an object instead of a boolean, you can specify the global behavior an info-class type should have.
 ```html
-<toaster-container toaster-options="{'close-button': { 'toast-warning': true, 'toast-error': false } }"></toaster-container>
+<toaster-container toaster-options="
+    {'close-button':{ 'toast-warning': true, 'toast-error': false } }">
+</toaster-container>
 ```
 If a type is not defined and specified, the default behavior for that type is false.
 
@@ -94,7 +96,14 @@ This option is given the most weight and will override the global configurations
 ```
 
 ### Animations
-Unlike toastr, this library relies on ngAnimate and CSS3 transformations for animations.
+Unlike toastr, this library relies on ngAnimate and CSS3 transformations for optional animations.  To include and use animations, add a reference to angular-animate.min.js (as described in Getting started - Link scripts) and add ngAnimate as a dependency alongside toaster. 
+
+```js
+// Inject ngAnimate to enable animations
+angular.module('main', ['toaster', 'ngAnimate']);
+```
+If you do not want to use animations, you can safely remove the angular-animate.min.js reference as well as the injection of ngAnimate.  Toasts will be displayed without animations.
+
 		
 ## Author
 **Jiri Kavulak**
@@ -124,7 +133,7 @@ var _toaster = {
 ```
 
 - Add option in function toaster.clear()
- * toaster.clear(); --> clearAll with ToasterId = Undifined;
+ * toaster.clear(); --> clearAll with ToasterId = undefined;
  * toaster.clear('*'); -> ClearAll()
  * toaster.clear('clearID'); -> clearAll() with toaster have ToasterId = 'clearID'
 * toaster.clear('clearID', 'toastID'); -> Just clearAll with toasts have uid = 'toastID' in  ToasterId = 'clearID'.

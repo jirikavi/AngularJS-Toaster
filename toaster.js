@@ -14,7 +14,7 @@
      * Related to project of John Papa, Hans Fjällemark and Nguyễn Thiện Hùng (thienhung1989)
      */
 
-    angular.module('toaster', ['ngAnimate']).constant(
+    angular.module('toaster', []).constant(
         'toasterConfig', {
             'limit': 0,                   // limits max number of toasts
             'tap-to-dismiss': true,
