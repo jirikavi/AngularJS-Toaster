@@ -1,2 +1,2 @@
 require("./toaster.js");
-module.exports = "angular-toaster";
+module.exports = "toaster";
