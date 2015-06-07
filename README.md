@@ -87,6 +87,37 @@ toaster.pop({
 ```
 This option is given the most weight and will override the global configurations for that toast.  However, it will not persist to other toasts of that type and does not alter or pollute the global configuration.
 
+### Body Output Type
+The rendering of the body content is configurable at both the Global level, which applies to all toasts, and the individual toast level when passed as an argument to the toast.
+
+There are three types of body renderings: trustedHtml', 'template', 'templateWithData'.
+
+ - trustedHtml:  When using this configuration, the toast will parse the body content using 
+	`$sce.trustAsHtml(toast.body)`.
+	If the html can be successfully parsed, it will be bound to the toast via `ng-bind-html`.  If it cannot be parsed as "trustable" html, an exception will be thrown.	
+
+ - template:  Will use the `toast.body` if passed as an argument, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
+ 
+ - templateWithData: 
+	 - Will use the `toast.body` if passed as an argument, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
+	 - Assigns any data associated with the template to the toast.
+
+All three options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
+
+ - Globally:
+```html
+<toaster-container toaster-options="'body-output-type': 'template'"></toaster-container>
+```
+ - Per toast:
+  
+```js
+toaster.pop({
+            type: 'error',
+            title: 'Title text',
+            body: 'Body text',
+            bodyOutputType: 'trustedHtml'
+});
+```
 
 ### Other Options
 
