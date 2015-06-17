@@ -119,6 +119,23 @@ toaster.pop({
 });
 ```
 
+### On Hide Callback
+A callback function can be attached to each toast instance.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
+
+```js
+toaster.pop({
+            title: 'A toast',
+		    body: 'with a callback',
+			onHideCallback: function () { 
+			    toaster.pop({
+			        title: 'A toast',
+				    body: 'invoked as a callback'
+				});
+			}
+});
+```
+
+
 ### Other Options
 
 ```html
