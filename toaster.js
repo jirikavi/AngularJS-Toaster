@@ -406,9 +406,9 @@
                                     var removeToast = true;
                                     if (toast.clickHandler) {
                                         if (angular.isFunction(toast.clickHandler)) {
-                                            removeToast = toast.clickHandler(toast, true);
+                                            removeToast = toast.clickHandler(toast, isCloseButton);
                                         } else if (angular.isFunction($scope.$parent.$eval(toast.clickHandler))) {
-                                            removeToast = $scope.$parent.$eval(toast.clickHandler)(toast, toast.showCloseButton);
+                                            removeToast = $scope.$parent.$eval(toast.clickHandler)(toast, isCloseButton);
                                         } else {
                                             console.log("TOAST-NOTE: Your click handler is not inside a parent scope of toaster-container.");
                                         }
