@@ -71,7 +71,7 @@
                             showCloseButton: params.showCloseButton,
                             uid: params.toastId,
                             onHideCallback: params.onHideCallback,
-							data: params.data
+			    data: params.data
                         };
                         toastId = params.toastId;
                         toasterId = params.toasterId;
@@ -86,7 +86,7 @@
                             showCloseButton: showCloseButton,
                             uid: toastId,
                             onHideCallback: onHideCallback,
-							dataObject: data
+			    data: data
                         };
                     }
                     $rootScope.$emit('toaster-newToast', toasterId, toastId);
