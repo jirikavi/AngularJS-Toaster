@@ -90,7 +90,7 @@ This option is given the most weight and will override the global configurations
 ### Body Output Type
 The rendering of the body content is configurable at both the Global level, which applies to all toasts, and the individual toast level when passed as an argument to the toast.
 
-There are three types of body renderings: trustedHtml', 'template', 'templateWithData'.
+There are four types of body renderings: trustedHtml', 'template', 'templateWithData', 'directive'.
 
  - trustedHtml:  When using this configuration, the toast will parse the body content using 
 	`$sce.trustAsHtml(toast.body)`.
@@ -102,22 +102,41 @@ There are three types of body renderings: trustedHtml', 'template', 'templateWit
 	 - Will use the `toast.body` if passed as an argument, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
 	 - Assigns any data associated with the template to the toast.
 
-All three options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
+ - directive 
+	 - Will use the `toast.body` argument to represent the name of a directive that you want to render as the toast's body, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
+    
+    ```js
+    // The toast pop call, passing in a directive name to be rendered
+    toaster.pop({
+		type: 'info',
+		body: 'bind-unsafe-html',
+		bodyOutputType: 'directive'
+	});
+    ```
+    ```js
+    // The directive that will be dynamically rendered
+    .directive('bindUnsafeHtml', [function () {
+            return {
+                template: "<span style='color:orange'>Orange directive text!</span>"
+            };
+    }])
+    ```
+    
+All four options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
 
  - Globally:
-```html
-<toaster-container toaster-options="'body-output-type': 'template'"></toaster-container>
-```
+    ```html
+    <toaster-container toaster-options="'body-output-type': 'template'"></toaster-container>
+    ```
  - Per toast:
-  
-```js
-toaster.pop({
+    ```js
+    toaster.pop({
             type: 'error',
             title: 'Title text',
             body: 'Body text',
             bodyOutputType: 'trustedHtml'
-});
-```
+    });
+    ```
 
 ### On Hide Callback
 A callback function can be attached to each toast instance.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
