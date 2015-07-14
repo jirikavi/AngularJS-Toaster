@@ -97,10 +97,12 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
 	If the html can be successfully parsed, it will be bound to the toast via `ng-bind-html`.  If it cannot be parsed as "trustable" html, an exception will be thrown.	
 
  - template:  Will use the `toast.body` if passed as an argument, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
+	 - Any data passed in by type or the data param will be assgined to the toast.data property for binding.
  
  - templateWithData: 
 	 - Will use the `toast.body` if passed as an argument, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
-	 - Assigns any data associated with the template to the toast.
+	 - Assigns any data associated with the template to the toast. Template data will override the data param.
+	 
 
  - directive 
 	 - Will use the `toast.body` argument to represent the name of a directive that you want to render as the toast's body, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
