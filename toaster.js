@@ -258,8 +258,10 @@
                             if (mergedConfig['prevent-duplicates'] === true) {
                                 // Prevent adding duplicate toasts if it's set
                                 if (isUndefinedOrNull(toastId)) {
-                                    if (scope.toasters.length > 0 && scope.toasters[scope.toasters.length - 1].body === toast.body) {
-                                        return;
+                                    for (i = 0, len = scope.toasters.length; i < len; i++) {
+                                        if (scope.toasters[i].body === toast.body) {
+                                            return;
+                                        }
                                     }
                                 } else {
                                     var i, len;
