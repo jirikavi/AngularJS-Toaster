@@ -64,7 +64,7 @@ The Close Button's visibility can be configured at three different levels:
 
 * Globally in the config for all toast types:
 ```html
-<toaster-container toaster-options="'close-button': true"></toaster-container>
+<toaster-container toaster-options="{'close-button': true}"></toaster-container>
 ```
 
 * Per info-class type:
@@ -126,7 +126,7 @@ All four options can be configured either globally for all toasts or individuall
 
  - Globally:
     ```html
-    <toaster-container toaster-options="'body-output-type': 'template'"></toaster-container>
+    <toaster-container toaster-options="{'body-output-type': 'template'}"></toaster-container>
     ```
  - Per toast:
     ```js
