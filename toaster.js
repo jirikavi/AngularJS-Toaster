@@ -58,7 +58,7 @@
         ).service(
         'toaster', [
             '$rootScope', 'toasterConfig', function ($rootScope, toasterConfig) {
-                this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+                this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback, data) {
                     if (angular.isObject(type)) {
                         var params = type; // Enable named parameters as pop argument
                         this.toast = {
@@ -70,7 +70,8 @@
                             clickHandler: params.clickHandler,
                             showCloseButton: params.showCloseButton,
                             uid: params.toastId,
-                            onHideCallback: params.onHideCallback
+                            onHideCallback: params.onHideCallback,
+			    data: params.data
                         };
                         toastId = params.toastId;
                         toasterId = params.toasterId;
@@ -84,7 +85,8 @@
                             clickHandler: clickHandler,
                             showCloseButton: showCloseButton,
                             uid: toastId,
-                            onHideCallback: onHideCallback
+                            onHideCallback: onHideCallback,
+			    data: data
                         };
                     }
                     $rootScope.$emit('toaster-newToast', toasterId, toastId);
