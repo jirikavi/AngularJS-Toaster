@@ -116,7 +116,7 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
     
       ```js
     // The directive that will be dynamically rendered
-    .directive('bindName', [function () {
+    .directive('bindUnsafeHtml', [function () {
             return {
                 template: "<span style='color:orange'>Orange directive text!</span>"
             };
@@ -128,7 +128,7 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
       // The toast pop call, passing in a directive name to be rendered
       toaster.pop({
               type: 'info',
-              body: 'bind-unsafe-html',
+              body: 'bind-name',
               bodyOutputType: 'directive',
               directiveData: { name: 'Bob' }
       });
