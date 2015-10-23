@@ -104,7 +104,6 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
 
  - directive 
 	 - Will use the `toast.body` argument to represent the name of a directive that you want to render as the toast's body, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
-    
      ```js
     // The toast pop call, passing in a directive name to be rendered
     toaster.pop({
@@ -123,7 +122,6 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
     }])
     ```
      - Will use the `toast.directiveData` argument to accept data that will be bound to the directive's scope.
-    
      ```js
     // The toast pop call, passing in a directive name to be rendered
     toaster.pop({
