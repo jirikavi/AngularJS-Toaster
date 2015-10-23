@@ -104,54 +104,53 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
 
  - directive 
 	 - Will use the `toast.body` argument to represent the name of a directive that you want to render as the toast's body, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
-	    ```js
-	    // The toast pop call, passing in a directive name to be rendered
-	    toaster.pop({
-			    type: 'info',
-			    body: 'bind-unsafe-html',
-			    bodyOutputType: 'directive'
-		});
-	    ```
-			
-		```js
-		    // The directive that will be dynamically rendered
-			.directive('bindName', [function () {
-	            return {
-	                template: "<span style='color:orange'>Orange directive text!</span>"
-	            };
-		    }])
-		```
     
+     ```js
+    // The toast pop call, passing in a directive name to be rendered
+    toaster.pop({
+		    type: 'info',
+		    body: 'bind-unsafe-html',
+		    bodyOutputType: 'directive'
+	});
+    ```
+    
+    ```js
+    // The directive that will be dynamically rendered
+    .directive('bindName', [function () {
+            return {
+                template: "<span style='color:orange'>Orange directive text!</span>"
+            };
+    }])
+    ```
      - Will use the `toast.directiveData` argument to accept data that will be bound to the directive's scope.
-	    ```js
-	    // The toast pop call, passing in a directive name to be rendered
-	    toaster.pop({
-			    type: 'info',
-			    body: 'bind-unsafe-html',
-			    bodyOutputType: 'directive',
-	            directiveData: { name: 'Bob' }
-		});
-	    ```
-	    
-	    ```js
-	    // The directive that will be dynamically rendered
-	    .directive('bindName', [function () {
-	            return {
-	                template: "<span style='color:orange'>Hi {{directiveData.name}}!</span>"
-	            };
-	    }])
-	    ```
+    
+     ```js
+    // The toast pop call, passing in a directive name to be rendered
+    toaster.pop({
+		    type: 'info',
+		    body: 'bind-unsafe-html',
+		    bodyOutputType: 'directive',
+            directiveData: { name: 'Bob' }
+	});
+    ```
+    
+    ```js
+    // The directive that will be dynamically rendered
+    .directive('bindName', [function () {
+            return {
+                template: "<span style='color:orange'>Hi {{directiveData.name}}!</span>"
+            };
+    }])
+    ```
     There are additional documented use cases in these [tests](test/directiveTemplateSpec.js).
     
 All four options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
 
  - Globally:
-    
     ```html
     <toaster-container toaster-options="{'body-output-type': 'template'}"></toaster-container>
     ```
  - Per toast:
-    
     ```js
     toaster.pop({
             type: 'error',
