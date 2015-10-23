@@ -11,10 +11,13 @@
     "type": "git",
     "url": "https://github.com/jirikavi/AngularJS-Toaster.git"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "angular": ">1.2.6",
-    "angular-animate": "~1.2.8"
+    "angular-animate": "~1.2.8",
+    "angular-mocks": "^1.4.7",
+    "karma": "^0.13.14",
+    "karma-coverage": "^0.5.3",
+    "karma-jasmine": "^0.3.6"
   }
 }

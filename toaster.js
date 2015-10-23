@@ -58,7 +58,7 @@
         ).service(
         'toaster', [
             '$rootScope', 'toasterConfig', function ($rootScope, toasterConfig) {
-                this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+                this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback, directiveData) {
                     if (angular.isObject(type)) {
                         var params = type; // Enable named parameters as pop argument
                         this.toast = {
@@ -70,7 +70,8 @@
                             clickHandler: params.clickHandler,
                             showCloseButton: params.showCloseButton,
                             uid: params.toastId,
-                            onHideCallback: params.onHideCallback
+                            onHideCallback: params.onHideCallback,
+                            directiveData: params.directiveData
                         };
                         toastId = params.toastId;
                         toasterId = params.toasterId;
@@ -84,7 +85,8 @@
                             clickHandler: clickHandler,
                             showCloseButton: showCloseButton,
                             uid: toastId,
-                            onHideCallback: onHideCallback
+                            onHideCallback: onHideCallback,
+                            directiveData: directiveData
                         };
                     }
                     $rootScope.$emit('toaster-newToast', toasterId, toastId);
@@ -100,7 +102,7 @@
                 }
 
                 function createTypeMethod(toasterType) {
-                    return function (title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+                    return function (title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback, directiveData) {
                         if (angular.isString(title)) {
                             this.pop(
                                 toasterType,
@@ -112,7 +114,8 @@
                                 toasterId,
                                 showCloseButton,
                                 toastId,
-                                onHideCallback
+                                onHideCallback,
+                                directiveData
                                 );
                         } else { // 'title' is actually an object with options
                             this.pop(angular.extend(title, { type: toasterType }));
@@ -186,16 +189,29 @@
                 };
             }]
         )
-        .directive('directiveTemplate', ['$compile', function($compile) {
+        .directive('directiveTemplate', ['$compile', '$injector', function($compile, $injector) {
             return {
                 restrict: 'A',
                 scope: {
-                    directiveName: '@directiveName'
+                    directiveName: '@directiveName',
+                    directiveData: '@directiveData'
                 },
                 replace: true,   
                 link: function (scope, elm, attrs) {
                     scope.$watch('directiveName', function (directiveName) {
+                        if (angular.isUndefined(directiveName) || directiveName.length <= 0)
+                            throw new Error('A valid directive name must be provided via the toast body argument when using bodyOutputType: directive');
+                        
+                        var directiveExists = $injector.has(attrs.$normalize(directiveName) + 'Directive');
+                        
+                        if (!directiveExists)
+                            throw new Error(directiveName + ' could not be found.');
+                        
+                        if (scope.directiveData)
+                            scope.directiveData = angular.fromJson(scope.directiveData);
+                        
                         var template = $compile('<div ' + directiveName + '></div>')(scope);
+
                         elm.append(template);
                     });
                 }
@@ -449,7 +465,7 @@
                                     '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' + 
                                     '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' + 
                                     '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                                    '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}"></div></div>' + 
+                                    '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' + 
                                     '<div ng-switch-default >{{toaster.body}}</div>' + 
                                 '</div>' + 
                             '</div>' + 
