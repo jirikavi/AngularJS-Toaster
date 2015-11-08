@@ -87,6 +87,29 @@ toaster.pop({
 ```
 This option is given the most weight and will override the global configurations for that toast.  However, it will not persist to other toasts of that type and does not alter or pollute the global configuration.
 
+### Close Html
+
+The close button html can be overridden either globally or per toast call.
+
+ - Globally:
+
+    ```html
+    <toaster-container toaster-options="{'close-html':'<button>Close</button>', 
+        'showCloseButton':true}"></toaster-container>
+    ```
+ - Per toast:
+
+    ```js
+    toaster.pop({
+            type: 'error',
+            title: 'Title text',
+            body: 'Body text',
+            showCloseButton: true,
+            closeHtml: '<button>Close</button>'
+    });
+    ```
+
+
 ### Body Output Type
 The rendering of the body content is configurable at both the Global level, which applies to all toasts, and the individual toast level when passed as an argument to the toast.
 
@@ -148,10 +171,13 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
 All four options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
 
  - Globally:
+ 
     ```html
     <toaster-container toaster-options="{'body-output-type': 'template'}"></toaster-container>
     ```
+ 
  - Per toast:
+ 
     ```js
     toaster.pop({
             type: 'error',
@@ -202,28 +228,7 @@ If you do not want to use animations, you can safely remove the angular-animate.
 Inspired by http://codeseven.github.io/toastr/demo.html.
 
 ## Copyright
-Copyright © 2013 [Jiri Kavulak](https://twitter.com/jirikavi).
+Copyright © 2013-2015 [Jiri Kavulak](https://twitter.com/jirikavi).
 
 ## License 
 AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php
-
-##Changes Log
-## v0.4.13
-- Add option in function toaster.pop() , `toastId` to define 'uid', use the function 'toaster.clear ()'
-
-```js
-var _toaster = {
-                    type:      null,
-                    title:     null,
-                    body:      null,
-                    timeout:   null,
-                    toasterId: 'CategoryMenu',
-                    toastId:   'CategoryMenuAlert'
-                }
-```
-
-- Add option in function toaster.clear()
- * toaster.clear(); --> clearAll with ToasterId = undefined;
- * toaster.clear('*'); -> ClearAll()
- * toaster.clear('clearID'); -> clearAll() with toaster have ToasterId = 'clearID'
-* toaster.clear('clearID', 'toastID'); -> Just clearAll with toasts have uid = 'toastID' in  ToasterId = 'clearID'.
