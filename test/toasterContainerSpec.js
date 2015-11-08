@@ -35,6 +35,96 @@ describe('toasterContainer', function () {
 		expect(toasterEventRegistry.unsubscribeToNewToastEvent).toHaveBeenCalled();
 		expect(toasterEventRegistry.unsubscribeToClearToastsEvent).toHaveBeenCalled();
 	});
+	
+	
+	it('should default to icon-class config value if toast.type not found in icon-classes', function () {
+		var toasterConfig;
+		
+		inject(function (_toasterConfig_) {
+			toasterConfig = _toasterConfig_;
+		});
+
+		compileContainer();
+		
+		expect(toasterConfig['icon-class']).toBe('toast-info'); 
+		
+		toaster.pop({ type: 'invalid' });
+		
+		rootScope.$digest();
+		
+		expect(toaster.toast.type).toBe('toast-info');
+	});
+
+	it('should allow subsequent duplicates if prevent-duplicates is not set', function () {
+		var container = compileContainer();
+		var scope = container.scope();
+				
+		expect(scope.toasters.length).toBe(0);
+				
+		toaster.pop({ type: 'info', title: 'title', body: 'body' });
+		toaster.pop({ type: 'info', title: 'title', body: 'body' });
+		
+		rootScope.$digest();
+		
+		expect(scope.toasters.length).toBe(2);
+	});
+
+	it('should not allow subsequent duplicates if prevent-duplicates is true without toastId param', function () {
+		var container = angular.element(
+			'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
+
+		$compile(container)(rootScope);
+		rootScope.$digest();
+				
+		var scope = container.scope();
+				
+		expect(scope.toasters.length).toBe(0);
+				
+		toaster.pop({ type: 'info', title: 'title', body: 'body' });
+		toaster.pop({ type: 'info', title: 'title', body: 'body' });
+		
+		rootScope.$digest();
+		
+		expect(scope.toasters.length).toBe(1);
+	});
+	
+	it('should allow subsequent duplicates if prevent-duplicates is true with unique toastId params', function () {
+		var container = angular.element(
+			'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
+
+		$compile(container)(rootScope);
+		rootScope.$digest();
+				
+		var scope = container.scope();
+				
+		expect(scope.toasters.length).toBe(0);
+				
+		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
+		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 2 });
+		
+		rootScope.$digest();
+		
+		expect(scope.toasters.length).toBe(2);
+	});
+
+	it('should not allow subsequent duplicates if prevent-duplicates is true with identical toastId params', function () {
+		var container = angular.element(
+			'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
+
+		$compile(container)(rootScope);
+		rootScope.$digest();
+				
+		var scope = container.scope();
+				
+		expect(scope.toasters.length).toBe(0);
+				
+		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
+		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
+		
+		rootScope.$digest();
+		
+		expect(scope.toasters.length).toBe(1);
+	});
 
 	it('should not render the close button if showCloseButton is false', function () {
 		var container = compileContainer();
@@ -138,6 +228,96 @@ describe('toasterContainer', function () {
 		
 		expect(buttons.length).toBe(0);
 		expect(buttons[0]).toBeUndefined();
+	});
+	
+	it('should render trustedHtml bodyOutputType', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'trustedHtml', body: '<section>Body</section>' });
+		
+		rootScope.$digest();
+
+		var body = container.find('section');
+		
+		expect(body.length).toBe(1);
+		expect(body[0].outerHTML).toBe('<section>Body</section>');
+	});
+	
+	it('should render template bodyOutputType when body is passed', function () {
+		inject(function($templateCache) {
+			$templateCache.put('/templatepath/template.html', '<section>Template</section>');
+		});
+		
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'template', body: '/templatepath/template.html' });
+		
+		rootScope.$digest();
+
+		expect(toaster.toast.body).toBe('/templatepath/template.html');
+
+		var body = container.find('section');
+		
+		expect(body.length).toBe(1);
+		expect(body[0].outerHTML).toBe('<section class="ng-scope">Template</section>');
+	});
+	
+	it('should render default template bodyOutputType when body is not passed', function () {
+		inject(function($templateCache) {
+			$templateCache.put('toasterBodyTmpl.html', '<section>Template</section>');
+		});
+		
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'template' });
+		
+		rootScope.$digest();
+
+		expect(toaster.toast.bodyTemplate).toBe('toasterBodyTmpl.html');
+
+		var body = container.find('section');
+		
+		expect(body.length).toBe(1);
+		expect(body[0].outerHTML).toBe('<section class="ng-scope">Template</section>');
+	});
+	
+	it('should render templateWithData bodyOutputType when body is passed', function () {
+		inject(function($templateCache) {
+			$templateCache.put('template.html', '<section>Template {{toaster.data}}</section>');
+		});
+		
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'templateWithData', body: "{template: 'template.html', data: 123 }" });
+		
+		rootScope.$digest();
+
+		var body = container.find('section');
+		
+		expect(body.length).toBe(1);
+		expect(body[0].outerHTML).toBe('<section class="ng-binding ng-scope">Template 123</section>');
+	});
+	
+	it('should throw exception for default templateWithData bodyOutputType when body is not passed', function () {
+		// TODO:  If the default fallback template cannot be parsed to an object
+		// composed of template and data, an exception is thrown.  This seems to 
+		// be undesirable behavior.  A clearer exception should be thrown, or better
+		// handling should be handled, or the fallback option should be removed.
+		inject(function($templateCache) {
+			$templateCache.put('template.html', '<section>Template {{toaster.data}}</section>');
+		});
+		
+		compileContainer();
+		var hasException = false;
+		
+		try {
+			toaster.pop({ bodyOutputType: 'templateWithData' });
+		} catch (e) {
+			expect(e.message).toBe("Cannot read property 'template' of undefined");
+			hasException = true;	
+		}
+		
+		expect(hasException).toBe(true);
 	});
 });
 
