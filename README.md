@@ -92,11 +92,13 @@ This option is given the most weight and will override the global configurations
 The close button html can be overridden either globally or per toast call.
 
  - Globally:
+
     ```html
     <toaster-container toaster-options="{'close-html':'<button>Close</button>', 
         'showCloseButton':true}"></toaster-container>
     ```
  - Per toast:
+
     ```js
     toaster.pop({
             type: 'error',
@@ -226,7 +228,7 @@ If you do not want to use animations, you can safely remove the angular-animate.
 Inspired by http://codeseven.github.io/toastr/demo.html.
 
 ## Copyright
-Copyright © 2013 [Jiri Kavulak](https://twitter.com/jirikavi).
+Copyright © 2013-2015 [Jiri Kavulak](https://twitter.com/jirikavi).
 
 ## License 
 AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php
