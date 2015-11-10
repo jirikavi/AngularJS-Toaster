@@ -16,6 +16,14 @@ describe('toasterContainer', function () {
 		});
 	});
 
+	it('should pop a toast via individual parameters', function () {
+		var container = compileContainer();
+		var scope = container.scope();
+		
+		toaster.pop('info', 'test', 'test');
+		
+		expect(scope.toasters.length).toBe(1);
+	});
 
 	it('should unsubscribe events on $destroy if handlers exist', function () {
 		var toasterEventRegistry;
@@ -37,287 +45,566 @@ describe('toasterContainer', function () {
 	});
 	
 	
-	it('should default to icon-class config value if toast.type not found in icon-classes', function () {
-		var toasterConfig;
-		
-		inject(function (_toasterConfig_) {
-			toasterConfig = _toasterConfig_;
+	describe('addToast', function () {
+		it('should default to icon-class config value if toast.type not found in icon-classes', function () {
+			var toasterConfig;
+			
+			inject(function (_toasterConfig_) {
+				toasterConfig = _toasterConfig_;
+			});
+	
+			compileContainer();
+			
+			expect(toasterConfig['icon-class']).toBe('toast-info'); 
+			
+			toaster.pop({ type: 'invalid' });
+			
+			rootScope.$digest();
+			
+			expect(toaster.toast.type).toBe('toast-info');
 		});
-
-		compileContainer();
-		
-		expect(toasterConfig['icon-class']).toBe('toast-info'); 
-		
-		toaster.pop({ type: 'invalid' });
-		
-		rootScope.$digest();
-		
-		expect(toaster.toast.type).toBe('toast-info');
-	});
-
-	it('should allow subsequent duplicates if prevent-duplicates is not set', function () {
-		var container = compileContainer();
-		var scope = container.scope();
-				
-		expect(scope.toasters.length).toBe(0);
-				
-		toaster.pop({ type: 'info', title: 'title', body: 'body' });
-		toaster.pop({ type: 'info', title: 'title', body: 'body' });
-		
-		rootScope.$digest();
-		
-		expect(scope.toasters.length).toBe(2);
-	});
-
-	it('should not allow subsequent duplicates if prevent-duplicates is true without toastId param', function () {
-		var container = angular.element(
-			'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
-
-		$compile(container)(rootScope);
-		rootScope.$digest();
-				
-		var scope = container.scope();
-				
-		expect(scope.toasters.length).toBe(0);
-				
-		toaster.pop({ type: 'info', title: 'title', body: 'body' });
-		toaster.pop({ type: 'info', title: 'title', body: 'body' });
-		
-		rootScope.$digest();
-		
-		expect(scope.toasters.length).toBe(1);
-	});
 	
-	it('should allow subsequent duplicates if prevent-duplicates is true with unique toastId params', function () {
-		var container = angular.element(
-			'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
-
-		$compile(container)(rootScope);
-		rootScope.$digest();
-				
-		var scope = container.scope();
-				
-		expect(scope.toasters.length).toBe(0);
-				
-		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
-		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 2 });
-		
-		rootScope.$digest();
-		
-		expect(scope.toasters.length).toBe(2);
-	});
-
-	it('should not allow subsequent duplicates if prevent-duplicates is true with identical toastId params', function () {
-		var container = angular.element(
-			'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
-
-		$compile(container)(rootScope);
-		rootScope.$digest();
-				
-		var scope = container.scope();
-				
-		expect(scope.toasters.length).toBe(0);
-				
-		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
-		toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
-		
-		rootScope.$digest();
-		
-		expect(scope.toasters.length).toBe(1);
-	});
-
-	it('should not render the close button if showCloseButton is false', function () {
-		var container = compileContainer();
-
-		toaster.pop({ type: 'info', body: 'With a close button' });
-
-		rootScope.$digest();
-
-		expect(container.find('button')[0]).toBeUndefined();
-	});
-
-	it('should use the default close html if toast.closeHtml is undefined', function () {
-		var container = compileContainer();
-
-		toaster.pop({ type: 'info', body: 'With a close button', showCloseButton: true });
-
-		rootScope.$digest();
-
-		var buttons = container.find('button');
-		
-		expect(buttons.length).toBe(1);
-		expect(buttons[0].outerHTML).toBe('<button class="toast-close-button" type="button">×</button>');
-	});
+		it('should allow subsequent duplicates if prevent-duplicates is not set', function () {
+			var container = compileContainer();
+			var scope = container.scope();
+					
+			expect(scope.toasters.length).toBe(0);
+					
+			toaster.pop({ type: 'info', title: 'title', body: 'body' });
+			toaster.pop({ type: 'info', title: 'title', body: 'body' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+		});
 	
-	it('should use the toast.closeHtml argument if passed', function () {
-		var container = compileContainer();
-
-		toaster.pop({ type: 'info', body: 'With a close button', showCloseButton: true,
-			closeHtml: '<button>Close</button>'
-		 });
-
-		rootScope.$digest();
-
-		var buttons = container.find('button');
-		
-		expect(buttons.length).toBe(1);
-		expect(buttons[0].outerHTML).toBe('<button>Close</button>');
-	});
+		it('should not allow subsequent duplicates if prevent-duplicates is true without toastId param', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
 	
-	it('should render toast.closeHtml argument if not a button element', function () {
-		var container = compileContainer();
-
-		toaster.pop({ type: 'info', body: 'With close text', showCloseButton: true,
-			closeHtml: '<span>Close</span>'
-		 });
-
-		rootScope.$digest();
-
-		var spans = container.find('span');
-		
-		expect(spans.length).toBe(1);
-		expect(spans[0].outerHTML).toBe('<span>Close</span>');
-	});
-	
-	it('should show the close button if mergedConfig close-button is an object set to true for toast-info', function () {
-		var container = angular.element(
-			'<toaster-container toaster-options="{\'close-button\': {\'toast-info\': true}}"></toaster-container>');
-
-		$compile(container)(rootScope);
-		rootScope.$digest();
-
-		toaster.pop({ type: 'info' });
-
-		rootScope.$digest();
-
-		var buttons = container.find('button');
-		
-		expect(buttons.length).toBe(1);
-		expect(buttons[0].outerHTML).toBe('<button class="toast-close-button" type="button">×</button>');
-	});
-	
-	it('should not render the close button if mergedConfig close-button type cannot be found', function () {
-		var container = angular.element(
-			'<toaster-container toaster-options="{\'close-button\': {\'toast-invalid\': true}}"></toaster-container>');
-
-		$compile(container)(rootScope);
-		rootScope.$digest();
-
-		toaster.pop({ type: 'info' });
-
-		rootScope.$digest();
-
-		var buttons = container.find('button');
-		
-		expect(buttons.length).toBe(0);
-		expect(buttons[0]).toBeUndefined();
-	});
-	
-	it('should not render the close button if mergedConfig close-button is not an object', function () {
-		var container = angular.element(
-			'<toaster-container toaster-options="{\'close-button\': 1 }"></toaster-container>');
-
-		$compile(container)(rootScope);
-		rootScope.$digest();
-
-		toaster.pop({ type: 'info' });
-
-		rootScope.$digest();
-
-		var buttons = container.find('button');
-		
-		expect(buttons.length).toBe(0);
-		expect(buttons[0]).toBeUndefined();
-	});
-	
-	it('should render trustedHtml bodyOutputType', function () {
-		var container = compileContainer();
-		
-		toaster.pop({ bodyOutputType: 'trustedHtml', body: '<section>Body</section>' });
-		
-		rootScope.$digest();
-
-		var body = container.find('section');
-		
-		expect(body.length).toBe(1);
-		expect(body[0].outerHTML).toBe('<section>Body</section>');
-	});
-	
-	it('should render template bodyOutputType when body is passed', function () {
-		inject(function($templateCache) {
-			$templateCache.put('/templatepath/template.html', '<section>Template</section>');
+			$compile(container)(rootScope);
+			rootScope.$digest();
+					
+			var scope = container.scope();
+					
+			expect(scope.toasters.length).toBe(0);
+					
+			toaster.pop({ type: 'info', title: 'title', body: 'body' });
+			toaster.pop({ type: 'info', title: 'title', body: 'body' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(1);
 		});
 		
-		var container = compileContainer();
-		
-		toaster.pop({ bodyOutputType: 'template', body: '/templatepath/template.html' });
-		
-		rootScope.$digest();
-
-		expect(toaster.toast.body).toBe('/templatepath/template.html');
-
-		var body = container.find('section');
-		
-		expect(body.length).toBe(1);
-		expect(body[0].outerHTML).toBe('<section class="ng-scope">Template</section>');
-	});
+		it('should allow subsequent duplicates if prevent-duplicates is true with unique toastId params', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
 	
-	it('should render default template bodyOutputType when body is not passed', function () {
-		inject(function($templateCache) {
-			$templateCache.put('toasterBodyTmpl.html', '<section>Template</section>');
+			$compile(container)(rootScope);
+			rootScope.$digest();
+					
+			var scope = container.scope();
+					
+			expect(scope.toasters.length).toBe(0);
+					
+			toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
+			toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 2 });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+		});
+	
+		it('should not allow subsequent duplicates if prevent-duplicates is true with identical toastId params', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
+	
+			$compile(container)(rootScope);
+			rootScope.$digest();
+					
+			var scope = container.scope();
+					
+			expect(scope.toasters.length).toBe(0);
+					
+			toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
+			toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(1);
+		});
+	
+		it('should not render the close button if showCloseButton is false', function () {
+			var container = compileContainer();
+	
+			toaster.pop({ type: 'info', body: 'With a close button' });
+	
+			rootScope.$digest();
+	
+			expect(container.find('button')[0]).toBeUndefined();
+		});
+	
+		it('should use the default close html if toast.closeHtml is undefined', function () {
+			var container = compileContainer();
+	
+			toaster.pop({ type: 'info', body: 'With a close button', showCloseButton: true });
+	
+			rootScope.$digest();
+	
+			var buttons = container.find('button');
+			
+			expect(buttons.length).toBe(1);
+			expect(buttons[0].outerHTML).toBe('<button class="toast-close-button" type="button">×</button>');
 		});
 		
-		var container = compileContainer();
-		
-		toaster.pop({ bodyOutputType: 'template' });
-		
-		rootScope.$digest();
-
-		expect(toaster.toast.bodyTemplate).toBe('toasterBodyTmpl.html');
-
-		var body = container.find('section');
-		
-		expect(body.length).toBe(1);
-		expect(body[0].outerHTML).toBe('<section class="ng-scope">Template</section>');
-	});
+		it('should use the toast.closeHtml argument if passed', function () {
+			var container = compileContainer();
 	
-	it('should render templateWithData bodyOutputType when body is passed', function () {
-		inject(function($templateCache) {
-			$templateCache.put('template.html', '<section>Template {{toaster.data}}</section>');
+			toaster.pop({ type: 'info', body: 'With a close button', showCloseButton: true,
+				closeHtml: '<button>Close</button>'
+			});
+	
+			rootScope.$digest();
+	
+			var buttons = container.find('button');
+			
+			expect(buttons.length).toBe(1);
+			expect(buttons[0].outerHTML).toBe('<button>Close</button>');
 		});
 		
-		var container = compileContainer();
-		
-		toaster.pop({ bodyOutputType: 'templateWithData', body: "{template: 'template.html', data: 123 }" });
-		
-		rootScope.$digest();
-
-		var body = container.find('section');
-		
-		expect(body.length).toBe(1);
-		expect(body[0].outerHTML).toBe('<section class="ng-binding ng-scope">Template 123</section>');
-	});
+		it('should render toast.closeHtml argument if not a button element', function () {
+			var container = compileContainer();
 	
-	it('should throw exception for default templateWithData bodyOutputType when body is not passed', function () {
-		// TODO:  If the default fallback template cannot be parsed to an object
-		// composed of template and data, an exception is thrown.  This seems to 
-		// be undesirable behavior.  A clearer exception should be thrown, or better
-		// handling should be handled, or the fallback option should be removed.
-		inject(function($templateCache) {
-			$templateCache.put('template.html', '<section>Template {{toaster.data}}</section>');
+			toaster.pop({ type: 'info', body: 'With close text', showCloseButton: true,
+				closeHtml: '<span>Close</span>'
+			});
+	
+			rootScope.$digest();
+	
+			var spans = container.find('span');
+			
+			expect(spans.length).toBe(1);
+			expect(spans[0].outerHTML).toBe('<span>Close</span>');
 		});
 		
-		compileContainer();
-		var hasException = false;
+		it('should show the close button if mergedConfig close-button is an object set to true for toast-info', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'close-button\': {\'toast-info\': true}}"></toaster-container>');
+	
+			$compile(container)(rootScope);
+			rootScope.$digest();
+	
+			toaster.pop({ type: 'info' });
+	
+			rootScope.$digest();
+	
+			var buttons = container.find('button');
+			
+			expect(buttons.length).toBe(1);
+			expect(buttons[0].outerHTML).toBe('<button class="toast-close-button" type="button">×</button>');
+		});
 		
-		try {
-			toaster.pop({ bodyOutputType: 'templateWithData' });
-		} catch (e) {
-			expect(e.message).toBe("Cannot read property 'template' of undefined");
-			hasException = true;	
-		}
+		it('should not render the close button if mergedConfig close-button type cannot be found', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'close-button\': {\'toast-invalid\': true}}"></toaster-container>');
+	
+			$compile(container)(rootScope);
+			rootScope.$digest();
+	
+			toaster.pop({ type: 'info' });
+	
+			rootScope.$digest();
+	
+			var buttons = container.find('button');
+			
+			expect(buttons.length).toBe(0);
+			expect(buttons[0]).toBeUndefined();
+		});
 		
-		expect(hasException).toBe(true);
+		it('should not render the close button if mergedConfig close-button is not an object', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'close-button\': 1 }"></toaster-container>');
+	
+			$compile(container)(rootScope);
+			rootScope.$digest();
+	
+			toaster.pop({ type: 'info' });
+	
+			rootScope.$digest();
+	
+			var buttons = container.find('button');
+			
+			expect(buttons.length).toBe(0);
+			expect(buttons[0]).toBeUndefined();
+		});
+		
+		it('should render trustedHtml bodyOutputType', function () {
+			var container = compileContainer();
+			
+			toaster.pop({ bodyOutputType: 'trustedHtml', body: '<section>Body</section>' });
+			
+			rootScope.$digest();
+	
+			var body = container.find('section');
+			
+			expect(body.length).toBe(1);
+			expect(body[0].outerHTML).toBe('<section>Body</section>');
+		});
+		
+		it('should render template bodyOutputType when body is passed', function () {
+			inject(function($templateCache) {
+				$templateCache.put('/templatepath/template.html', '<section>Template</section>');
+			});
+			
+			var container = compileContainer();
+			
+			toaster.pop({ bodyOutputType: 'template', body: '/templatepath/template.html' });
+			
+			rootScope.$digest();
+	
+			expect(toaster.toast.body).toBe('/templatepath/template.html');
+	
+			var body = container.find('section');
+			
+			expect(body.length).toBe(1);
+			expect(body[0].outerHTML).toBe('<section class="ng-scope">Template</section>');
+		});
+		
+		it('should render default template bodyOutputType when body is not passed', function () {
+			inject(function($templateCache) {
+				$templateCache.put('toasterBodyTmpl.html', '<section>Template</section>');
+			});
+			
+			var container = compileContainer();
+			
+			toaster.pop({ bodyOutputType: 'template' });
+			
+			rootScope.$digest();
+	
+			expect(toaster.toast.bodyTemplate).toBe('toasterBodyTmpl.html');
+	
+			var body = container.find('section');
+			
+			expect(body.length).toBe(1);
+			expect(body[0].outerHTML).toBe('<section class="ng-scope">Template</section>');
+		});
+		
+		it('should render templateWithData bodyOutputType when body is passed', function () {
+			inject(function($templateCache) {
+				$templateCache.put('template.html', '<section>Template {{toaster.data}}</section>');
+			});
+			
+			var container = compileContainer();
+			
+			toaster.pop({ bodyOutputType: 'templateWithData', body: "{template: 'template.html', data: 123 }" });
+			
+			rootScope.$digest();
+	
+			var body = container.find('section');
+			
+			expect(body.length).toBe(1);
+			expect(body[0].outerHTML).toBe('<section class="ng-binding ng-scope">Template 123</section>');
+		});
+		
+		it('should throw exception for default templateWithData bodyOutputType when body is not passed', function () {
+			// TODO:  If the default fallback template cannot be parsed to an object
+			// composed of template and data, an exception is thrown.  This seems to 
+			// be undesirable behavior.  A clearer exception should be thrown, or better
+			// handling should be handled, or the fallback option should be removed.
+			inject(function($templateCache) {
+				$templateCache.put('template.html', '<section>Template {{toaster.data}}</section>');
+			});
+			
+			compileContainer();
+			var hasException = false;
+			
+			try {
+				toaster.pop({ bodyOutputType: 'templateWithData' });
+			} catch (e) {
+				expect(e.message).toBe("Cannot read property 'template' of undefined");
+				hasException = true;	
+			}
+			
+			expect(hasException).toBe(true); 
+		});
+		
+		it('should remove first in toast if limit is met and newest-on-top is true', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'limit\': 2, \'newest-on-top\': true }"></toaster-container>');
+				
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			
+			var scope = container.scope();
+			
+			toaster.pop({ type: 'info', body: 'first' });
+			toaster.pop({ type: 'info', body: 'second' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('second');
+			expect(scope.toasters[1].body).toBe('first');
+			
+			toaster.pop({ type: 'info', body: 'third' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('third');
+			expect(scope.toasters[1].body).toBe('second');
+		});
+		
+		it('should remove last in toast if limit is met and newest-on-top is false', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'limit\': 2, \'newest-on-top\': false }"></toaster-container>');
+				
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			
+			var scope = container.scope();
+			
+			toaster.pop({ type: 'info', body: 'first' });
+			toaster.pop({ type: 'info', body: 'second' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('first');
+			expect(scope.toasters[1].body).toBe('second');
+			
+			toaster.pop({ type: 'info', body: 'third' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('second');
+			expect(scope.toasters[1].body).toBe('third');
+		});
+	});
+	
+	
+	describe('removeToast', function () {
+		it('should not remove toast if id does not match a toast id', function() {
+			var container = compileContainer();
+			var scope = container.scope();
+			
+			toaster.pop({ type: 'info', body: 'toast 1' });
+			toaster.pop({ type: 'info', body: 'toast 2' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].id).toBe(2)
+			expect(scope.toasters[1].id).toBe(1)
+			
+			scope.removeToast(3);
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+		});
+	
+		it('should invoke onHideCallback if it exists when toast is removed', function () {
+			var container = compileContainer();
+			var scope = container.scope();
+			
+			var mock = {
+				callback : function () { }
+			};
+			
+			spyOn(mock, 'callback');
+			
+			toaster.pop({ type: 'info', body: 'toast 1', onHideCallback: mock.callback });
+			
+			rootScope.$digest();
+			scope.removeToast(1);
+			rootScope.$digest();
+			
+			expect(mock.callback).toHaveBeenCalled();
+		});
+	});
+
+
+	describe('scope._onNewTest', function () {
+		it('should not add toast if toasterId is passed to scope._onNewToast but toasterId is not set via config', function () {
+			var container = compileContainer();
+			var scope = container.scope();
+	
+			expect(scope.config.toasterId).toBeUndefined();
+			
+			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1 });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(0);
+		});
+		
+		it('should add toast if toasterId is passed to scope._onNewToast and toasterId is set via config', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 1 }"></toaster-container>');
+					
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+	
+			expect(scope.config.toasterId).toBe(1);
+			
+			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1 });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(1);
+		});
+	
+		it('should add toasts to their respective container based on toasterId', function () {
+			var container1 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 1 }"></toaster-container>');
+			var container2 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 2 }"></toaster-container>');
+					
+			$compile(container1)(rootScope);
+			$compile(container2)(rootScope);
+			rootScope.$digest();
+			
+			var scope1 = container1.scope();
+			var scope2 = container2.scope();
+				
+			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1 });
+			toaster.pop({ type: 'info', body: 'toast 2', toasterId: 2 });
+				
+			rootScope.$digest();
+				
+			expect(scope1.toasters.length).toBe(1);
+			expect(scope2.toasters.length).toBe(1);
+		});
+	});
+
+	describe('scope._onClearToasts', function (){
+		it('should remove all toasts from all containers if toasterId is *', function () {
+			var container1 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 1 }"></toaster-container>');
+			var container2 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 2 }"></toaster-container>');
+					
+			$compile(container1)(rootScope);
+			$compile(container2)(rootScope);
+			rootScope.$digest();
+			
+			var scope1 = container1.scope();
+			var scope2 = container2.scope();
+				
+			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1 });
+			toaster.pop({ type: 'info', body: 'toast 2', toasterId: 2 });
+				
+			rootScope.$digest();
+				
+			expect(scope1.toasters.length).toBe(1);
+			expect(scope2.toasters.length).toBe(1);
+			
+			toaster.clear('*');
+			
+			rootScope.$digest();
+			
+			expect(scope1.toasters.length).toBe(0);
+			expect(scope2.toasters.length).toBe(0); 
+		});
+		
+		it('should remove all toasts from all containers if config.toasterId and toastId are undefined', function () {
+			var container1 = angular.element(
+				'<toaster-container toaster-options="{ \'close-button\': false }"></toaster-container>');
+			var container2 = angular.element(
+				'<toaster-container toaster-options="{ \'close-button\': true }" ></toaster-container>');
+					
+			$compile(container1)(rootScope);
+			$compile(container2)(rootScope);
+			rootScope.$digest();
+			
+			var scope1 = container1.scope();
+			var scope2 = container2.scope();
+				
+			toaster.pop({ type: 'info', body: 'toast 1' });
+			toaster.pop({ type: 'info', body: 'toast 2' });
+				
+			rootScope.$digest();
+				
+			// since there are two separate instances of the container  
+			// without a toasterId, both receive the newToast event
+			expect(scope1.toasters.length).toBe(2);
+			expect(scope2.toasters.length).toBe(2);
+			
+			toaster.clear();
+			
+			rootScope.$digest();
+			
+			expect(scope1.toasters.length).toBe(0);
+			expect(scope2.toasters.length).toBe(0);
+		});
+		
+		it('should not remove by toasterId / toastId from the correct container if toast.toasterId is defined and toast.toastId is undefined', function () {
+			var container1 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 1 }"></toaster-container>');
+			var container2 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 2 }"></toaster-container>');
+					
+			$compile(container1)(rootScope);
+			$compile(container2)(rootScope);
+			rootScope.$digest();
+			
+			var scope1 = container1.scope();
+			var scope2 = container2.scope();
+			
+			// removeAllToasts explicitly looks for toast.uid, which is only set
+			// if toastId is passed as a parameter
+			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1 });
+			toaster.pop({ type: 'info', body: 'toast 2', toasterId: 2 });
+			toaster.pop({ type: 'info', body: 'toast 3', toasterId: 2 });
+				
+			rootScope.$digest();
+				
+			expect(scope1.toasters.length).toBe(1);
+			expect(scope2.toasters.length).toBe(2);
+			
+			toaster.clear(2, 1);
+			
+			rootScope.$digest();
+			
+			expect(scope1.toasters.length).toBe(1);
+			expect(scope2.toasters.length).toBe(2);
+		});
+		
+		it('should remove by toasterId / toastId from the correct container if toasterId is defined and toastId is defined', function () {
+			var container1 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 1 }"></toaster-container>');
+			var container2 = angular.element(
+				'<toaster-container toaster-options="{ \'toaster-id\': 2 }"></toaster-container>');
+					
+			$compile(container1)(rootScope);
+			$compile(container2)(rootScope);
+			rootScope.$digest();
+			
+			var scope1 = container1.scope();
+			var scope2 = container2.scope();
+			
+			// removeAllToasts explicitly looks for toast.uid, which is only set
+			// if toastId is passed as a parameter
+			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1, toastId: 1 });
+			toaster.pop({ type: 'info', body: 'toast 2', toasterId: 2, toastId: 1 });
+			toaster.pop({ type: 'info', body: 'toast 3', toasterId: 2, toastId: 2 });
+				
+			rootScope.$digest();
+				
+			expect(scope1.toasters.length).toBe(1);
+			expect(scope2.toasters.length).toBe(2);
+			
+			toaster.clear(2, 1);
+			
+			rootScope.$digest();
+			
+			expect(scope1.toasters.length).toBe(1);
+			expect(scope2.toasters.length).toBe(1);
+		});
 	});
 });
 

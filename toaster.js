@@ -316,9 +316,10 @@
                                 toast.showCloseButton = false;
                             }
                             
-                            // Set the toast.closeHtml
-                            toast.closeHtml = $sce.trustAsHtml(toast.closeHtml || scope.config.closeHtml);
-
+                            if (toast.showCloseButton) {
+                                toast.closeHtml = $sce.trustAsHtml(toast.closeHtml || scope.config.closeHtml);
+                            }
+                             
                             // Set the toast.bodyOutputType to the default if it isn't set
                             toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
                             switch (toast.bodyOutputType) {
