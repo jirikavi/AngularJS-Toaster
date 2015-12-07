@@ -1,9 +1,9 @@
 {
   "name": "angularjs-toaster",
-  "version": "0.4.16",
+  "version": "0.4.18",
   "description": "AngularJS Toaster is a customized version of toastr non-blocking notification javascript library",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "author": "Jiri Kavulak",
   "license": "MIT",
@@ -16,6 +16,7 @@
     "angular": ">1.2.6",
     "angular-animate": "~1.2.8",
     "angular-mocks": "^1.4.7",
+    "gulp": "^3.9.0",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.14",
     "karma-chrome-launcher": "^0.2.1",
