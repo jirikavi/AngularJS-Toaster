@@ -1,6 +1,6 @@
 {
   "name": "AngularJS-Toaster",
-  "version": "0.4.16",
+  "version": "0.4.18",
   "main": [
     "toaster.js",
     "toaster.css"
