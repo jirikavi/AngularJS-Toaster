@@ -18,6 +18,16 @@ module.exports = function(config) {
 	config.reporters.push('coverage');
 	config.plugins.push('karma-coverage');
 
+	config.customLaunchers = {
+        Chrome_travis_ci: {
+            base: 'Chrome',
+            flags: ['--no-sandbox']
+        }
+    };
+	
+	if (process.env.TRAVIS) {
+    	configuration.browsers = ['Chrome_travis_ci'];
+	}
 
 	config.set(config);
 };
