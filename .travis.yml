@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - "4.1"
 before_script:
-  - npm install -g gulp
-  - npm install -g karma
+  - npm install gulp
+  - npm install karma
   - npm install karma-jasmine
   - npm install karma-chrome-launcher
   - npm install karma-coverage
