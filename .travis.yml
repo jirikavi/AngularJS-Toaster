@@ -11,4 +11,5 @@ before_script:
   - npm install karma-jasmine
   - npm install karma-chrome-launcher
   - npm install karma-coverage
-script: node_modules/karma/bin/karma start karma.coverage.js --single-run 
+script: node_modules/karma/bin/karma start karma.coverage.js --single-run
+after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
