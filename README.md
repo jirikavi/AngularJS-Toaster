@@ -5,7 +5,7 @@ AngularJS-Toaster
 (I would suggest to use /1.2.8/angular-animate.js, there is a weird blinking in newer versions.)
 
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
-[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg)](https://coveralls.io/r/jirikavi/AngularJS-Toaster)
+[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
 ### Current Version 0.4.18
 
