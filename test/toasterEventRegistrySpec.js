@@ -26,7 +26,7 @@ describe('toasterEventRegistry', function () {
 		try {
 			toasterEventRegistry.unsubscribeToNewToastEvent(function () {});	
 		} catch(e) {
-			expect(e.message).toBe('deregisterNewToast is not a function');
+			expect(e.message.indexOf(' is not a function')).toBeGreaterThan(-1);
 			hasError = true;
 		}
 		
@@ -53,7 +53,7 @@ describe('toasterEventRegistry', function () {
 		try {
 			toasterEventRegistry.unsubscribeToClearToastsEvent(function () {});	
 		} catch(e) {
-			expect(e.message).toBe('deregisterClearToasts is not a function');
+			expect(e.message.indexOf(' is not a function')).toBeGreaterThan(-1);
 			hasError = true;
 		}
 		
