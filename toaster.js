@@ -367,15 +367,15 @@
 
                         function removeToast(toastIndex) {
                             var toast = scope.toasters[toastIndex];
-                            if (toast) {
-                                if (toast.timeoutPromise) {
-                                    $interval.cancel(toast.timeoutPromise);
-                                }
-                                scope.toasters.splice(toastIndex, 1);
+                            
+                            // toast is always defined since the index always has a match
+                            if (toast.timeoutPromise) {
+                                $interval.cancel(toast.timeoutPromise);
+                            }
+                            scope.toasters.splice(toastIndex, 1);
 
-                                if (angular.isFunction(toast.onHideCallback)) {
-                                    toast.onHideCallback();
-                                }
+                            if (angular.isFunction(toast.onHideCallback)) {
+                                toast.onHideCallback();
                             }
                         }
 
