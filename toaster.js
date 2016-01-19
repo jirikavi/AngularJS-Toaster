@@ -4,9 +4,9 @@
 
     /*
      * AngularJS Toaster
-     * Version: 0.4.18
+     * Version: 1.0.0
      *
-     * Copyright 2013-2015 Jiri Kavulak.
+     * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
      * Use, reproduction, distribution, and modification of this code is subject to the terms and
      * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
