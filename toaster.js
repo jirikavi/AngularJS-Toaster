@@ -4,7 +4,7 @@
 
     /*
      * AngularJS Toaster
-     * Version: 1.0.0
+     * Version: 1.0.1
      *
      * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
@@ -72,6 +72,7 @@
                             showCloseButton: params.showCloseButton,
                             closeHtml: params.closeHtml,
                             uid: params.toastId,
+                            onShowCallback: params.onShowCallback,
                             onHideCallback: params.onHideCallback,
                             directiveData: params.directiveData
                         };
@@ -352,6 +353,10 @@
                                 if (mergedConfig['limit'] > 0 && scope.toasters.length > mergedConfig['limit']) {
                                     scope.toasters.shift();
                                 }
+                            }
+                            
+                            if (angular.isFunction(toast.onShowCallback)) {
+                                toast.onShowCallback();
                             }
                         }
 

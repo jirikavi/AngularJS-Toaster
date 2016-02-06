@@ -382,6 +382,36 @@ describe('toasterContainer', function () {
 			expect(scope.toasters[0].body).toBe('second');
 			expect(scope.toasters[1].body).toBe('third');
 		});
+        
+        it('should invoke onShowCallback if it exists when toast is added', function () {
+			compileContainer();
+			var mock = {
+				callback : function () { }
+			};
+			
+			spyOn(mock, 'callback');
+			
+			toaster.pop({ type: 'info', body: 'toast 1', onShowCallback: mock.callback });
+			
+			rootScope.$digest();
+			
+			expect(mock.callback).toHaveBeenCalled();
+		});
+        
+        it('should not invoke onShowCallback if it does not exist when toast is added', function () {
+			compileContainer();
+			var mock = {
+				callback : function () { }
+			};
+			
+			spyOn(mock, 'callback');
+			
+			toaster.pop({ type: 'info', body: 'toast 1' });
+			
+			rootScope.$digest();
+			
+			expect(mock.callback).not.toHaveBeenCalled();
+		});
 	});
 	
 	
