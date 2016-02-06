@@ -4,9 +4,9 @@ AngularJS-Toaster
 **AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations.
 
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
-[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&cachebust=1)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
+[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&busted=1)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 1.0.0
+### Current Version 1.0.1
 
 ## Demo
 - Simple demo is at http://plnkr.co/edit/HKTC1a
@@ -28,10 +28,10 @@ npm install --save angularjs-toaster
 * Link scripts:
 
 ```html
-<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.16/toaster.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.0.1/toaster.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js" ></script>
 <script src="https://code.angularjs.org/1.2.0/angular-animate.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.16/toaster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.0.1/toaster.min.js"></script>
 ```
 
 * Add toaster container directive: 
@@ -191,17 +191,33 @@ All four options can be configured either globally for all toasts or individuall
     });
     ```
 
-### On Hide Callback
-A callback function can be attached to each toast instance.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
+### On Show Callback
+An onShow callback function can be attached to each toast instance.  The callback will be invoked upon toast add.
 
 ```js
 toaster.pop({
             title: 'A toast',
-		    body: 'with a callback',
+		    body: 'with an onShow callback',
+			onShowCallback: function () { 
+			    toaster.pop({
+			        title: 'A toast',
+				    body: 'invoked as an onShow callback'
+				});
+			}
+});
+```
+
+### On Hide Callback
+An onHide callback function can be attached to each toast instance.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
+
+```js
+toaster.pop({
+            title: 'A toast',
+		    body: 'with an onHide callback',
 			onHideCallback: function () { 
 			    toaster.pop({
 			        title: 'A toast',
-				    body: 'invoked as a callback'
+				    body: 'invoked as an onHide callback'
 				});
 			}
 });
