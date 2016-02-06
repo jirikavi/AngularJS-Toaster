@@ -6,7 +6,7 @@ AngularJS-Toaster
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
 [![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&busted=1)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 1.0.1
+### Current Version 1.1.0
 
 ## Demo
 - Simple demo is at http://plnkr.co/edit/HKTC1a
@@ -28,10 +28,10 @@ npm install --save angularjs-toaster
 * Link scripts:
 
 ```html
-<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.0.1/toaster.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js" ></script>
 <script src="https://code.angularjs.org/1.2.0/angular-animate.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.0.1/toaster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.js"></script>
 ```
 
 * Add toaster container directive: 
