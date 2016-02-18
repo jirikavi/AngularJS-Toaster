@@ -221,8 +221,8 @@
                         
                         if (!directiveDetails.restrict.includes("A")) {
                             throw new Error('Directives must be usable as attributes. ' +
-                              'Add "A" to the restrict option (or remove the option entirely). Occurred for directive ' 
-                              + directiveName + '.');
+                              'Add "A" to the restrict option (or remove the option entirely). Occurred for directive ' + 
+                              directiveName + '.');
                         }
                         
                             
@@ -234,7 +234,7 @@
                         elm.append(template);
                     });
                 }
-            }
+            };
         }])
         .directive(
         'toasterContainer', [

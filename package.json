@@ -14,11 +14,11 @@
     "angular-animate": "~1.2.8",
     "angular-mocks": "^1.4.7",
     "jasmine-core": "^2.3.4",
-    "karma": "0.13.14",
-    "karma-chrome-launcher": "^0.2.1",
+    "karma": "^0.13.21",
+    "karma-chrome-launcher": "^0.2.2",
     "karma-coverage": "^0.5.3",
-    "karma-jasmine": "^0.3.6",
-    "coveralls": "^2.11.4"
+    "karma-jasmine": "^0.3.7",
+    "coveralls": "^2.11.6"
   },
   "jspm": {
     "main": "toaster",
