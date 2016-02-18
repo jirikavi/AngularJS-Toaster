@@ -219,12 +219,11 @@
                                 'Occurred for directive ' + directiveName + '.');
                         }
                         
-                        if (!directiveDetails.restrict.includes("A")) {
+                        if (directiveDetails.restrict.indexOf('A') < 0) {
                             throw new Error('Directives must be usable as attributes. ' +
                               'Add "A" to the restrict option (or remove the option entirely). Occurred for directive ' + 
                               directiveName + '.');
                         }
-                        
                             
                         if (scope.directiveData)
                             scope.directiveData = angular.fromJson(scope.directiveData);

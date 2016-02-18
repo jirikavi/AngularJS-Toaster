@@ -3,11 +3,11 @@
 'use strict';
 
 describe('directiveTemplate', function () {
-	createDirectives();
-
 	var toaster, scope, $compile;
 
 	beforeEach(function () {
+        createDirectives(); 
+        
 		// load dependencies
 		module('testApp');
 		module('toaster');
