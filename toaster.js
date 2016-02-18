@@ -4,7 +4,7 @@
 
     /*
      * AngularJS Toaster
-     * Version: 1.1.0
+     * Version: 1.2.0
      *
      * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
@@ -200,11 +200,32 @@
                         if (angular.isUndefined(directiveName) || directiveName.length <= 0)
                             throw new Error('A valid directive name must be provided via the toast body argument when using bodyOutputType: directive');
                         
-                        var directiveExists = $injector.has(attrs.$normalize(directiveName) + 'Directive');
+                        var directive;
                         
-                        if (!directiveExists)
-                            throw new Error(directiveName + ' could not be found.');
+                        try {
+                            directive = $injector.get(attrs.$normalize(directiveName) + 'Directive');
+                        } catch(e) {
+                            throw new Error(directiveName + ' could not be found. ' +
+                                 'The name should appear as it exists in the markup, not camelCased as it would appear in the directive declaration,' +
+                                 ' e.g. directive-name not directiveName.');
+                        }
                         
+                        
+                        var directiveDetails = directive[0];
+                            
+                        if (directiveDetails.scope !== true && directiveDetails.scope) {
+                            throw new Error('Cannot use a directive with an isolated scope. ' + 
+                                'The scope must be either true or falsy (e.g. false/null/undefined). ' + 
+                                'Occurred for directive ' + directiveName + '.');
+                        }
+                        
+                        if (!directiveDetails.restrict.includes("A")) {
+                            throw new Error('Directives must be usable as attributes. ' +
+                              'Add "A" to the restrict option (or remove the option entirely). Occurred for directive ' 
+                              + directiveName + '.');
+                        }
+                        
+                            
                         if (scope.directiveData)
                             scope.directiveData = angular.fromJson(scope.directiveData);
                         

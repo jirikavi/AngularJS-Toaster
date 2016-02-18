@@ -4,9 +4,13 @@ AngularJS-Toaster
 **AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations.
 
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
-[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&busted=1)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
+[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&busting=3)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 1.1.0
+### Current Version 1.2.0
+
+## Angular Compatibility
+AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets AngularJS, not Angular 2, although it could be used via ngUpgrade.  
+If you are looking for the Angular 2 port of AngularJS-Toaster, it is located [here](https://github.com/Stabzs/Angular2-Toaster).
 
 ## Demo
 - Simple demo is at http://plnkr.co/edit/HKTC1a
@@ -129,8 +133,8 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
 
  - directive 
 	 - Will use the `toast.body` argument to represent the name of a directive that you want to render as the toast's body, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
-    The directive name being passed to the `body` argument should be normalized as it exists in the markup, 
-     not camelCased as it would appear in the directive declaration (`cool-directive-name` instead of `coolDirectiveName`).
+    The directive name being passed to the `body` argument should appear as it exists in the markup, 
+     not camelCased as it would appear in the directive declaration (`cool-directive-name` instead of `coolDirectiveName`). The directive must be usable as an attribute.
     
       ```js
     // The toast pop call, passing in a directive name to be rendered
@@ -149,7 +153,8 @@ There are four types of body renderings: trustedHtml', 'template', 'templateWith
             };
     }])
     ```
-     - Will use the `toast.directiveData` argument to accept data that will be bound to the directive's scope. 
+     - Will use the `toast.directiveData` argument to accept data that will be bound to the directive's scope. The directive cannot use isolateScope and will
+     throw an exception if isolateScope is detected.  All data must be passed via the directiveData argument.
     
         ```js
       // The toast pop call, passing in a directive name to be rendered
@@ -275,7 +280,7 @@ If you do not want to use animations, you can safely remove the angular-animate.
 ### Common Issues
 - Toaster always shows up as "info"
     - Your `<toaster-container></toaster-container` might be placed inside of your routing directive.
-    - You have multiple `<toaster-container></toaster-container` elements without unqiue `toaster-id` configuration arguments.
+    - You have multiple `<toaster-container></toaster-container` elements without unique `toaster-id` configuration arguments.
 - [$sce:itype] Attempted to trust a non-string value in a content requiring a string 
     - You have not specified: `bodyOutputType: 'trustedHtml'` when passing html as a body argument.
 - My toasts do not show up when I pop them, but after I perform another action.
@@ -294,7 +299,7 @@ If you do not want to use animations, you can safely remove the angular-animate.
 Inspired by http://codeseven.github.io/toastr/demo.html.
 
 ## Copyright
-Copyright © 2013-2015 [Jiri Kavulak](https://twitter.com/jirikavi).
+Copyright © 2013-2016 [Jiri Kavulak](https://twitter.com/jirikavi).
 
 ## License 
 AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php
