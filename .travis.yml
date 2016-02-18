@@ -6,7 +6,7 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 before_script:
-  - npm install karma
+  - npm install karma@0.13.14
   - npm install karma-jasmine
   - npm install karma-chrome-launcher
   - npm install karma-coverage

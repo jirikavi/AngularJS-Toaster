@@ -10,7 +10,7 @@ describe('directiveTemplate', function () {
 	beforeEach(function () {
 		// load dependencies
 		module('testApp');
-		module('toaster')
+		module('toaster');
 		
 		// inject the toaster service
         inject(function (_toaster_, _$rootScope_, _$compile_) {
