@@ -208,6 +208,6 @@ describe('directiveTemplate', function () {
 			})
             .directive('isolateScope', function () {
                 return { template: 'isolate scope template', scope: {}}
-            });
+            }); 
 	}
 })
