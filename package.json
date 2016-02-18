@@ -19,5 +19,18 @@
     "karma-coverage": "^0.5.3",
     "karma-jasmine": "^0.3.6",
     "coveralls": "^2.11.4"
+  },
+  "jspm": {
+    "main": "toaster",
+    "dependencies": {
+      "css": "jspm:css@*"
+    },
+    "shim": {
+      "toaster": {
+        "deps": [
+          "./toaster.css!"
+        ]
+      }
+    }
   }
 }
