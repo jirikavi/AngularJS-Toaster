@@ -4,7 +4,7 @@
 
     /*
      * AngularJS Toaster
-     * Version: 1.2.0
+     * Version: 1.2.1
      *
      * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
@@ -19,24 +19,10 @@
         'toasterConfig', {
             'limit': 0,                   // limits max number of toasts
             'tap-to-dismiss': true,
-
-            /* Options:
-             - Boolean false/true
-             'close-button': true
-             - object if not a boolean that allows you to
-             override showing the close button for each
-             icon-class value
-             'close-button': { 'toast-error': true, 'toast-info': false }
-             */
             'close-button': false,
             'close-html': '<button class="toast-close-button" type="button">&times;</button>',
-            'newest-on-top': true, 
-            //'fade-in': 1000,            // done in css
-            //'on-fade-in': undefined,    // not implemented
-            //'fade-out': 1000,           // done in css
-            //'on-fade-out': undefined,   // not implemented
-            //'extended-time-out': 1000,  // not implemented
-            'time-out': 5000, // Set timeOut and extendedTimeout to 0 to make it sticky
+            'newest-on-top': true,
+            'time-out': 5000,
             'icon-classes': {
                 error: 'toast-error',
                 info: 'toast-info',

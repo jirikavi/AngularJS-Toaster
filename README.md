@@ -6,7 +6,7 @@ AngularJS-Toaster
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
 [![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&busting=3)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 1.2.0
+### Current Version 1.2.1
 
 ## Angular Compatibility
 AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets AngularJS, not Angular 2, although it could be used via ngUpgrade.  
@@ -62,6 +62,39 @@ angular.module('main', ['toaster', 'ngAnimate'])
 <div ng-controller="myController">
     <button ng-click="pop()">Show a Toaster</button>
 </div>
+```
+
+### Timeout
+By default, toasts have a timeout setting of 5000, meaning that they are removed after 5000 
+milliseconds.  
+
+If the timeout is set to anything other than a number greater than 0, the toast will be considered
+ "sticky" and will not automatically dismiss.
+
+The timeout can be configured at three different levels:
+
+* Globally in the config for all toast types:
+```html
+<toaster-container toaster-options="{'time-out': 1000}"></toaster-container>
+```
+
+* Per info-class type:
+By passing the time-out configuration as an object instead of a number, you can specify the global behavior an info-class type should have.
+```html
+<toaster-container toaster-options="
+    {'time-out':{ 'toast-warning': 10, 'toast-error': 0 } }">
+</toaster-container>
+```
+If a type is not defined and specified, a timeout will not be applied, making the toast "sticky".
+
+* Per toast constructed via toaster.pop('success', "title", "text"):
+```html
+toaster.pop({
+                type: 'error',
+                title: 'Title text',
+                body: 'Body text',
+                timeout: 3000
+            });
 ```
 
 ### Close Button
@@ -259,6 +292,35 @@ vm.popContainerTwo = function () {
 [This plnkr](http://plnkr.co/edit/4ICtcrpTSoAB9Vo5bRvN?p=preview) demonstrates this behavior 
 and it is documented in these [tests](test/toasterContainerSpec.js#L430).
 
+
+### Limit
+Limit is defaulted to 0, meaning that there is no maximum number of toasts that are defined 
+before the toast container begins removing toasts when a new toast is added.
+
+To change this behavior, pass a "limit" option to the toast-container configuration:
+
+```html
+<toaster-container toaster-options="{'limit':5}"></toaster-container>
+```
+
+### Dismiss on tap
+By default, the `tap-to-dismiss` option is set to true, meaning that if a toast is clicked anywhere 
+on the toast body, the toast will be dismissed.  This behavior can be overriden in the toast-container 
+configuration so that if set to false, the toast will only be dismissed if the close button is defined 
+and clicked:
+
+```html
+<toaster-container toaster-options="{'tap-to-dismiss':false}"></toaster-container>
+```
+
+### Newest Toasts on Top
+The `newest-on-top` option is defaulted to true, adding new toasts on top of other existing toasts. 
+If changed to false via the toaster-container configuration, toasts will be added to the bottom of 
+other existing toasts.
+
+```html
+<toaster-container toaster-options="{'newest-on-top':false}"></toaster-container>
+```
 
 ### Other Options
 
