@@ -102,7 +102,11 @@
                 };
 
                 this.clear = function(toasterId, toastId) {
-                    $rootScope.$emit('toaster-clearToasts', toasterId, toastId);
+                    if (angular.isObject(toasterId)) {
+                        $rootScope.$emit('toaster-clearToasts', toasterId.toasterId, toasterId.toastId);
+                    } else {
+                        $rootScope.$emit('toaster-clearToasts', toasterId, toastId);
+                    }
                 };
 
                 // Create one method per icon class, to allow to call toaster.info() and similar
@@ -113,7 +117,7 @@
                 function createTypeMethod(toasterType) {
                     return function(title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
                         if (angular.isString(title)) {
-                            this.pop(
+                            return this.pop(
                                 toasterType,
                                 title,
                                 body,
@@ -125,7 +129,7 @@
                                 toastId,
                                 onHideCallback);
                         } else { // 'title' is actually an object with options
-                            this.pop(angular.extend(title, { type: toasterType }));
+                            return this.pop(angular.extend(title, { type: toasterType }));
                         }
                     };
                 }
