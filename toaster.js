@@ -1,10 +1,10 @@
 /* global angular */
-(function (window, document) {
+(function(window, document) {
     'use strict';
 
     /*
      * AngularJS Toaster
-     * Version: 1.2.1
+     * Version: 2.0.0
      *
      * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
@@ -42,10 +42,22 @@
             'prevent-duplicates': false,
             'mouseover-timer-stop': true // stop timeout on mouseover and restart timer on mouseout
         }
-        ).service(
+    ).service(
         'toaster', [
-            '$rootScope', 'toasterConfig', function ($rootScope, toasterConfig) {
-                this.pop = function (type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+            '$rootScope', 'toasterConfig', function($rootScope, toasterConfig) {
+                // http://stackoverflow.com/questions/26501688/a-typescript-guid-class
+                var Guid = (function() {
+                    var Guid = {};
+                    Guid.newGuid = function() {
+                        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                            return v.toString(16);
+                        });
+                    };
+                    return Guid;
+                }());
+
+                this.pop = function(type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
                     if (angular.isObject(type)) {
                         var params = type; // Enable named parameters as pop argument
                         this.toast = {
@@ -57,12 +69,11 @@
                             clickHandler: params.clickHandler,
                             showCloseButton: params.showCloseButton,
                             closeHtml: params.closeHtml,
-                            uid: params.toastId,
+                            toastId: params.toastId,
                             onShowCallback: params.onShowCallback,
                             onHideCallback: params.onHideCallback,
                             directiveData: params.directiveData
                         };
-                        toastId = params.toastId;
                         toasterId = params.toasterId;
                     } else {
                         this.toast = {
@@ -73,14 +84,24 @@
                             bodyOutputType: bodyOutputType,
                             clickHandler: clickHandler,
                             showCloseButton: showCloseButton,
-                            uid: toastId,
+                            toastId: toastId,
                             onHideCallback: onHideCallback
                         };
                     }
-                    $rootScope.$emit('toaster-newToast', toasterId, toastId);
+
+                    if (!this.toast.toastId || !this.toast.toastId.length) {
+                        this.toast.toastId = Guid.newGuid();
+                    }
+
+                    $rootScope.$emit('toaster-newToast', toasterId, this.toast.toastId);
+                    
+                    return {
+                        toasterId: toasterId,
+                        toastId: this.toast.toastId
+                    };
                 };
 
-                this.clear = function (toasterId, toastId) {
+                this.clear = function(toasterId, toastId) {
                     $rootScope.$emit('toaster-clearToasts', toasterId, toastId);
                 };
 
@@ -90,7 +111,7 @@
                 }
 
                 function createTypeMethod(toasterType) {
-                    return function (title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+                    return function(title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
                         if (angular.isString(title)) {
                             this.pop(
                                 toasterType,
@@ -111,14 +132,14 @@
             }]
         ).factory(
         'toasterEventRegistry', [
-            '$rootScope', function ($rootScope) {
+            '$rootScope', function($rootScope) {
                 var deregisterNewToast = null, deregisterClearToasts = null, newToastEventSubscribers = [], clearToastsEventSubscribers = [], toasterFactory;
 
                 toasterFactory = {
-                    setup: function () {
+                    setup: function() {
                         if (!deregisterNewToast) {
                             deregisterNewToast = $rootScope.$on(
-                                'toaster-newToast', function (event, toasterId, toastId) {
+                                'toaster-newToast', function(event, toasterId, toastId) {
                                     for (var i = 0, len = newToastEventSubscribers.length; i < len; i++) {
                                         newToastEventSubscribers[i](event, toasterId, toastId);
                                     }
@@ -127,7 +148,7 @@
 
                         if (!deregisterClearToasts) {
                             deregisterClearToasts = $rootScope.$on(
-                                'toaster-clearToasts', function (event, toasterId, toastId) {
+                                'toaster-clearToasts', function(event, toasterId, toastId) {
                                     for (var i = 0, len = clearToastsEventSubscribers.length; i < len; i++) {
                                         clearToastsEventSubscribers[i](event, toasterId, toastId);
                                     }
@@ -135,13 +156,13 @@
                         }
                     },
 
-                    subscribeToNewToastEvent: function (onNewToast) {
+                    subscribeToNewToastEvent: function(onNewToast) {
                         newToastEventSubscribers.push(onNewToast);
                     },
-                    subscribeToClearToastsEvent: function (onClearToasts) {
+                    subscribeToClearToastsEvent: function(onClearToasts) {
                         clearToastsEventSubscribers.push(onClearToasts);
                     },
-                    unsubscribeToNewToastEvent: function (onNewToast) {
+                    unsubscribeToNewToastEvent: function(onNewToast) {
                         var index = newToastEventSubscribers.indexOf(onNewToast);
                         if (index >= 0) {
                             newToastEventSubscribers.splice(index, 1);
@@ -152,7 +173,7 @@
                             deregisterNewToast = null;
                         }
                     },
-                    unsubscribeToClearToastsEvent: function (onClearToasts) {
+                    unsubscribeToClearToastsEvent: function(onClearToasts) {
                         var index = clearToastsEventSubscribers.indexOf(onClearToasts);
                         if (index >= 0) {
                             clearToastsEventSubscribers.splice(index, 1);
@@ -180,40 +201,40 @@
                     directiveName: '@directiveName',
                     directiveData: '@directiveData'
                 },
-                replace: true,   
-                link: function (scope, elm, attrs) {
-                    scope.$watch('directiveName', function (directiveName) {
+                replace: true,
+                link: function(scope, elm, attrs) {
+                    scope.$watch('directiveName', function(directiveName) {
                         if (angular.isUndefined(directiveName) || directiveName.length <= 0)
                             throw new Error('A valid directive name must be provided via the toast body argument when using bodyOutputType: directive');
-                        
+
                         var directive;
-                        
+
                         try {
                             directive = $injector.get(attrs.$normalize(directiveName) + 'Directive');
-                        } catch(e) {
+                        } catch (e) {
                             throw new Error(directiveName + ' could not be found. ' +
-                                 'The name should appear as it exists in the markup, not camelCased as it would appear in the directive declaration,' +
-                                 ' e.g. directive-name not directiveName.');
+                                'The name should appear as it exists in the markup, not camelCased as it would appear in the directive declaration,' +
+                                ' e.g. directive-name not directiveName.');
                         }
-                        
-                        
+
+
                         var directiveDetails = directive[0];
-                            
+
                         if (directiveDetails.scope !== true && directiveDetails.scope) {
-                            throw new Error('Cannot use a directive with an isolated scope. ' + 
-                                'The scope must be either true or falsy (e.g. false/null/undefined). ' + 
+                            throw new Error('Cannot use a directive with an isolated scope. ' +
+                                'The scope must be either true or falsy (e.g. false/null/undefined). ' +
                                 'Occurred for directive ' + directiveName + '.');
                         }
-                        
+
                         if (directiveDetails.restrict.indexOf('A') < 0) {
                             throw new Error('Directives must be usable as attributes. ' +
-                              'Add "A" to the restrict option (or remove the option entirely). Occurred for directive ' + 
-                              directiveName + '.');
+                                'Add "A" to the restrict option (or remove the option entirely). Occurred for directive ' +
+                                directiveName + '.');
                         }
-                            
+
                         if (scope.directiveData)
                             scope.directiveData = angular.fromJson(scope.directiveData);
-                        
+
                         var template = $compile('<div ' + directiveName + '></div>')(scope);
 
                         elm.append(template);
@@ -224,13 +245,13 @@
         .directive(
         'toasterContainer', [
             '$parse', '$rootScope', '$interval', '$sce', 'toasterConfig', 'toaster', 'toasterEventRegistry',
-            function ($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEventRegistry) {
+            function($parse, $rootScope, $interval, $sce, toasterConfig, toaster, toasterEventRegistry) {
                 return {
                     replace: true,
                     restrict: 'EA',
                     scope: true, // creates an internal scope for this directive (one per directive instance)
-                    link: function (scope, elm, attrs) {
-                        var id = 0, mergedConfig;
+                    link: function(scope, elm, attrs) {
+                        var mergedConfig;
 
                         // Merges configuration set in directive with default one
                         mergedConfig = angular.extend({}, toasterConfig, scope.$eval(attrs.toasterOptions));
@@ -248,21 +269,21 @@
                         };
 
                         scope.$on(
-                            "$destroy", function () {
+                            "$destroy", function() {
                                 toasterEventRegistry.unsubscribeToNewToastEvent(scope._onNewToast);
                                 toasterEventRegistry.unsubscribeToClearToastsEvent(scope._onClearToasts);
                             }
-                            );
+                        );
 
                         function setTimeout(toast, time) {
                             toast.timeoutPromise = $interval(
-                                function () {
-                                    scope.removeToast(toast.id);
+                                function() {
+                                    scope.removeToast(toast.toastId);
                                 }, time, 1
-                                );
+                            );
                         }
 
-                        scope.configureTimer = function (toast) {
+                        scope.configureTimer = function(toast) {
                             var timeout = angular.isNumber(toast.timeout) ? toast.timeout : mergedConfig['time-out'];
                             if (typeof timeout === "object") timeout = timeout[toast.type];
                             if (timeout > 0) {
@@ -276,30 +297,22 @@
                                 toast.type = mergedConfig['icon-class'];
                             }
 
-                            if (mergedConfig['prevent-duplicates'] === true) {
-                                // Prevent adding duplicate toasts if it's set
-                                if (isUndefinedOrNull(toastId)) {
-                                    if (scope.toasters.length > 0 && scope.toasters[scope.toasters.length - 1].body === toast.body) {
-                                        return;
-                                    }
+                            if (mergedConfig['prevent-duplicates'] === true && scope.toasters.length) {
+                                if (scope.toasters[scope.toasters.length - 1].body === toast.body) {
+                                    return;
                                 } else {
-                                    var i, len;
+                                    var i, len, dupFound = false;
                                     for (i = 0, len = scope.toasters.length; i < len; i++) {
-                                        if (scope.toasters[i].uid === toastId) {
-                                            removeToast(i);
-                                            // update loop
-                                            i--;
-                                            len = scope.toasters.length;
+                                        if (scope.toasters[i].toastId === toastId) {
+                                            dupFound = true;
+                                            break;
                                         }
                                     }
+                                    
+                                    if (dupFound) return;
                                 }
                             }
 
-                            toast.id = ++id;
-                            // Sure uid defined
-                            if (!isUndefinedOrNull(toastId)) {
-                                toast.uid = toastId;
-                            }
 
                             // set the showCloseButton property on the toast so that
                             // each template can bind directly to the property to show/hide
@@ -322,11 +335,11 @@
                                 // if an option was not set, default to false.
                                 toast.showCloseButton = false;
                             }
-                            
+
                             if (toast.showCloseButton) {
                                 toast.closeHtml = $sce.trustAsHtml(toast.closeHtml || scope.config.closeHtml);
                             }
-                             
+
                             // Set the toast.bodyOutputType to the default if it isn't set
                             toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
                             switch (toast.bodyOutputType) {
@@ -348,7 +361,7 @@
                             }
 
                             scope.configureTimer(toast);
-                            
+
                             if (mergedConfig['newest-on-top'] === true) {
                                 scope.toasters.unshift(toast);
                                 if (mergedConfig['limit'] > 0 && scope.toasters.length > mergedConfig['limit']) {
@@ -360,16 +373,16 @@
                                     scope.toasters.shift();
                                 }
                             }
-                            
+
                             if (angular.isFunction(toast.onShowCallback)) {
                                 toast.onShowCallback();
                             }
                         }
 
-                        scope.removeToast = function (id) {
+                        scope.removeToast = function(toastId) {
                             var i, len;
                             for (i = 0, len = scope.toasters.length; i < len; i++) {
-                                if (scope.toasters[i].id === id) {
+                                if (scope.toasters[i].toastId === toastId) {
                                     removeToast(i);
                                     break;
                                 }
@@ -378,7 +391,7 @@
 
                         function removeToast(toastIndex) {
                             var toast = scope.toasters[toastIndex];
-                            
+
                             // toast is always defined since the index always has a match
                             if (toast.timeoutPromise) {
                                 $interval.cancel(toast.timeoutPromise);
@@ -395,7 +408,7 @@
                                 if (isUndefinedOrNull(toastId)) {
                                     removeToast(i);
                                 } else {
-                                    if (scope.toasters[i].uid == toastId) {
+                                    if (scope.toasters[i].toastId == toastId) {
                                         removeToast(i);
                                     }
                                 }
@@ -408,7 +421,7 @@
                             return angular.isUndefined(val) || val === null;
                         }
 
-                        scope._onNewToast = function (event, toasterId, toastId) {
+                        scope._onNewToast = function(event, toasterId, toastId) {
                             // Compatibility: if toaster has no toasterId defined, and if call to display
                             // hasn't either, then the request is for us
 
@@ -416,7 +429,7 @@
                                 addToast(toaster.toast, toastId);
                             }
                         };
-                        scope._onClearToasts = function (event, toasterId, toastId) {
+                        scope._onClearToasts = function(event, toasterId, toastId) {
                             // Compatibility: if toaster has no toasterId defined, and if call to display
                             // hasn't either, then the request is for us
                             if (toasterId == '*' || (isUndefinedOrNull(scope.config.toasterId) && isUndefinedOrNull(toasterId)) || (!isUndefinedOrNull(scope.config.toasterId) && !isUndefinedOrNull(toasterId) && scope.config.toasterId == toasterId)) {
@@ -430,9 +443,9 @@
                         toasterEventRegistry.subscribeToClearToastsEvent(scope._onClearToasts);
                     },
                     controller: [
-                        '$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+                        '$scope', '$element', '$attrs', function($scope, $element, $attrs) {
                             // Called on mouseover
-                            $scope.stopTimer = function (toast) {
+                            $scope.stopTimer = function(toast) {
                                 if ($scope.config.mouseoverTimer === true) {
                                     if (toast.timeoutPromise) {
                                         $interval.cancel(toast.timeoutPromise);
@@ -442,17 +455,17 @@
                             };
 
                             // Called on mouseout
-                            $scope.restartTimer = function (toast) {
+                            $scope.restartTimer = function(toast) {
                                 if ($scope.config.mouseoverTimer === true) {
                                     if (!toast.timeoutPromise) {
                                         $scope.configureTimer(toast);
                                     }
                                 } else if (toast.timeoutPromise === null) {
-                                    $scope.removeToast(toast.id);
+                                    $scope.removeToast(toast.toastId);
                                 }
                             };
 
-                            $scope.click = function (toast, isCloseButton) {
+                            $scope.click = function(toast, isCloseButton) {
                                 if ($scope.config.tap === true || (toast.showCloseButton === true && isCloseButton === true)) {
                                     var removeToast = true;
                                     if (toast.clickHandler) {
@@ -465,25 +478,25 @@
                                         }
                                     }
                                     if (removeToast) {
-                                        $scope.removeToast(toast.id);
+                                        $scope.removeToast(toast.toastId);
                                     }
                                 }
                             };
                         }],
-                    template: 
-                        '<div id="toast-container" ng-class="[config.position, config.animation]">' + 
-                            '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' + 
-                                '<div ng-if="toaster.showCloseButton" ng-click="click(toaster, true)" ng-bind-html="toaster.closeHtml"></div>' + 
-                                '<div ng-class="config.title">{{toaster.title}}</div>' + 
-                                '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' + 
-                                    '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' + 
-                                    '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' + 
-                                    '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                                    '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' + 
-                                    '<div ng-switch-default >{{toaster.body}}</div>' + 
-                                '</div>' + 
-                            '</div>' + 
-                        '</div>'
+                    template:
+                    '<div id="toast-container" ng-class="[config.position, config.animation]">' +
+                    '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
+                    '<div ng-if="toaster.showCloseButton" ng-click="click(toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
+                    '<div ng-class="config.title">{{toaster.title}}</div>' +
+                    '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
+                    '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
+                    '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
+                    '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
+                    '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
+                    '<div ng-switch-default >{{toaster.body}}</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>'
                 };
             }]
         );
