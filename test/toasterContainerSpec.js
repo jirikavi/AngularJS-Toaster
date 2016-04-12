@@ -78,7 +78,7 @@ describe('toasterContainer', function () {
 			expect(scope.toasters.length).toBe(2);
 		});
 	
-		it('should not allow subsequent duplicates if prevent-duplicates is true without toastId param', function () {
+		it('should not allow subsequent duplicates if prevent-duplicates is true and body matches', function () {
 			var container = angular.element(
 				'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
 	
@@ -92,12 +92,27 @@ describe('toasterContainer', function () {
 			toaster.pop({ type: 'info', title: 'title', body: 'body' });
 			toaster.pop({ type: 'info', title: 'title', body: 'body' });
 			
-			rootScope.$digest();
-			
 			expect(scope.toasters.length).toBe(1);
 		});
 		
-		it('should allow subsequent duplicates if prevent-duplicates is true with unique toastId params', function () {
+        it('should not allow subsequent duplicates if prevent-duplicates is true and id matches with unique bodies', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
+	
+			$compile(container)(rootScope);
+			rootScope.$digest();
+					
+			var scope = container.scope();
+					
+			expect(scope.toasters.length).toBe(0);
+					
+			var toastWrapper = toaster.pop({ type: 'info', title: 'title', body: 'body' });
+			toaster.pop({ type: 'info', title: 'title', body: 'body2', toastId: toastWrapper.toastId });
+			
+			expect(scope.toasters.length).toBe(1);
+		});
+        
+		it('should allow subsequent duplicates if prevent-duplicates is true with unique toastId and body params', function () {
 			var container = angular.element(
 				'<toaster-container toaster-options="{\'prevent-duplicates\': true}"></toaster-container>');
 	
@@ -109,7 +124,7 @@ describe('toasterContainer', function () {
 			expect(scope.toasters.length).toBe(0);
 					
 			toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 1 });
-			toaster.pop({ type: 'info', title: 'title', body: 'body', toastId: 2 });
+			toaster.pop({ type: 'info', title: 'title', body: 'body2', toastId: 2 });
 			
 			rootScope.$digest();
 			
@@ -416,18 +431,18 @@ describe('toasterContainer', function () {
 	
 	
 	describe('removeToast', function () {
-		it('should not remove toast if id does not match a toast id', function() {
+		it('should not remove toast if toastId does not match a toastId', function() {
 			var container = compileContainer();
 			var scope = container.scope();
 			
-			toaster.pop({ type: 'info', body: 'toast 1' });
-			toaster.pop({ type: 'info', body: 'toast 2' });
+			var toast1 = toaster.pop({ type: 'info', body: 'toast 1' });
+			var toast2 = toaster.pop({ type: 'info', body: 'toast 2' });
 			
 			rootScope.$digest();
 			
 			expect(scope.toasters.length).toBe(2);
-			expect(scope.toasters[0].id).toBe(2)
-			expect(scope.toasters[1].id).toBe(1)
+			expect(scope.toasters[1].toastId).toBe(toast1.toastId)
+			expect(scope.toasters[0].toastId).toBe(toast2.toastId)
 			
 			scope.removeToast(3);
 			
@@ -446,10 +461,10 @@ describe('toasterContainer', function () {
 			
 			spyOn(mock, 'callback');
 			
-			toaster.pop({ type: 'info', body: 'toast 1', onHideCallback: mock.callback });
+			var toast = toaster.pop({ type: 'info', body: 'toast 1', onHideCallback: mock.callback });
 			
 			rootScope.$digest();
-			scope.removeToast(1);
+			scope.removeToast(toast.toastId);
 			rootScope.$digest();
 			
 			expect(mock.callback).toHaveBeenCalled();
@@ -619,16 +634,16 @@ describe('toasterContainer', function () {
 			
 			// removeAllToasts explicitly looks for toast.uid, which is only set
 			// if toastId is passed as a parameter
-			toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1, toastId: 1 });
-			toaster.pop({ type: 'info', body: 'toast 2', toasterId: 2, toastId: 1 });
-			toaster.pop({ type: 'info', body: 'toast 3', toasterId: 2, toastId: 2 });
+			var toast1 = toaster.pop({ type: 'info', body: 'toast 1', toasterId: 1, toastId: 1 });
+			var toast2 = toaster.pop({ type: 'info', body: 'toast 2', toasterId: 2, toastId: 1 });
+			var toast3 = toaster.pop({ type: 'info', body: 'toast 3', toasterId: 2, toastId: 2 });
 				
 			rootScope.$digest();
 				
 			expect(scope1.toasters.length).toBe(1);
 			expect(scope2.toasters.length).toBe(2);
 			
-			toaster.clear(2, 1);
+			toaster.clear(2, toast2.toastId);
 			
 			rootScope.$digest();
 			
