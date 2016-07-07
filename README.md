@@ -68,7 +68,7 @@ angular.module('main', ['toaster', 'ngAnimate'])
 By default, toasts have a timeout setting of 5000, meaning that they are removed after 5000 
 milliseconds.  
 
-If the timeout is set to anything other than a number greater than 0, the toast will be considered
+If the timeout is set to 0, the toast will be considered
  "sticky" and will not automatically dismiss.
 
 The timeout can be configured at three different levels:
