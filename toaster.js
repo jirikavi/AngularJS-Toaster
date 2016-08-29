@@ -57,7 +57,7 @@
                     return Guid;
                 }());
 
-                this.pop = function(type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+                this.pop = function(type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, tapToDismiss, toastId, onHideCallback) {
                     if (angular.isObject(type)) {
                         var params = type; // Enable named parameters as pop argument
                         this.toast = {
@@ -68,6 +68,7 @@
                             bodyOutputType: params.bodyOutputType,
                             clickHandler: params.clickHandler,
                             showCloseButton: params.showCloseButton,
+                            tapToDismiss: params.tapToDismiss,
                             closeHtml: params.closeHtml,
                             toastId: params.toastId,
                             onShowCallback: params.onShowCallback,
@@ -84,6 +85,7 @@
                             bodyOutputType: bodyOutputType,
                             clickHandler: clickHandler,
                             showCloseButton: showCloseButton,
+                            tapToDismiss: tapToDismiss,
                             toastId: toastId,
                             onHideCallback: onHideCallback
                         };
@@ -94,7 +96,7 @@
                     }
 
                     $rootScope.$emit('toaster-newToast', toasterId, this.toast.toastId);
-                    
+
                     return {
                         toasterId: toasterId,
                         toastId: this.toast.toastId
@@ -312,7 +314,7 @@
                                             break;
                                         }
                                     }
-                                    
+
                                     if (dupFound) return;
                                 }
                             }
@@ -342,6 +344,10 @@
 
                             if (toast.showCloseButton) {
                                 toast.closeHtml = $sce.trustAsHtml(toast.closeHtml || scope.config.closeHtml);
+                            }
+
+                            if (typeof toast.tapToDismiss === "undefined") {
+                                toast.tapToDismiss = true;
                             }
 
                             // Set the toast.bodyOutputType to the default if it isn't set
@@ -470,7 +476,7 @@
                             };
 
                             $scope.click = function(toast, isCloseButton) {
-                                if ($scope.config.tap === true || (toast.showCloseButton === true && isCloseButton === true)) {
+                                if ($scope.config.tap === true && toast.tapToDismiss === true || (toast.showCloseButton === true && isCloseButton === true)) {
                                     var removeToast = true;
                                     if (toast.clickHandler) {
                                         if (angular.isFunction(toast.clickHandler)) {
