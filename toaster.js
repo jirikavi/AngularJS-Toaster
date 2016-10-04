@@ -42,7 +42,23 @@
             'prevent-duplicates': false,
             'mouseover-timer-stop': true // stop timeout on mouseover and restart timer on mouseout
         }
-    ).service(
+    ).run(['$templateCache', function($templateCache) {
+            $templateCache.put('angularjs-toaster/toast.html',
+                '<div id="toast-container" ng-class="[config.position, config.animation]">' +
+                    '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
+                        '<div ng-if="toaster.showCloseButton" ng-click="click(toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
+                        '<div ng-class="config.title">{{toaster.title}}</div>' +
+                        '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
+                        '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
+                        '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
+                        '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
+                        '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
+                        '<div ng-switch-default >{{toaster.body}}</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>');
+        }
+    ]).service(
         'toaster', [
             '$rootScope', 'toasterConfig', function($rootScope, toasterConfig) {
                 // http://stackoverflow.com/questions/26501688/a-typescript-guid-class
@@ -487,20 +503,7 @@
                                 }
                             };
                         }],
-                    template:
-                    '<div id="toast-container" ng-class="[config.position, config.animation]">' +
-                    '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
-                    '<div ng-if="toaster.showCloseButton" ng-click="click(toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
-                    '<div ng-class="config.title">{{toaster.title}}</div>' +
-                    '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
-                    '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
-                    '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                    '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                    '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
-                    '<div ng-switch-default >{{toaster.body}}</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>'
+                    templateUrl: 'angularjs-toaster/toast.html'
                 };
             }]
         );
