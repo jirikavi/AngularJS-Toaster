@@ -232,7 +232,83 @@ describe('toasterContainer controller', function () {
 			expect(scope.toasters.length).toBe(1);
 			expect(scope.removeToast).not.toHaveBeenCalled();
 		});
+
+		it('should do nothing if config.tap is not true and toast.tap is not true and isCloseButton is not true', function () {
+			var container = angular.element(
+			'<toaster-container toaster-options="{ \'tap-to-dismiss\': false, \'close-button\': true }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+			
+			spyOn(scope, 'removeToast').and.callThrough();
+			
+			toaster.pop({ type: 'info', tapToDismiss: false });
+			rootScope.$digest();
+			
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0], false);
+			
+			expect(scope.toasters.length).toBe(1);
+			expect(scope.removeToast).not.toHaveBeenCalled();
+		});
+
+		it('should do nothing if config.tap is true and toast.tap is not true and isCloseButton is not true', function () {
+			var container = angular.element(
+			'<toaster-container toaster-options="{ \'tap-to-dismiss\': true, \'close-button\': true }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+			
+			spyOn(scope, 'removeToast').and.callThrough();
+			
+			toaster.pop({ type: 'info', tapToDismiss: false });
+			rootScope.$digest();
+			
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0], false);
+			
+			expect(scope.toasters.length).toBe(1);
+			expect(scope.removeToast).not.toHaveBeenCalled();
+		});
 		
+		it('should remove toast if config.tap is false but toast.tap is true', function () {	
+			var container = angular.element(
+			'<toaster-container toaster-options="{ \'tap-to-dismiss\': false, \'close-button\': false }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+			
+			spyOn(scope, 'removeToast').and.callThrough();
+			
+			toaster.pop({ type: 'info', tapToDismiss: true });
+			rootScope.$digest();
+			
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
+			
+			expect(scope.toasters.length).toBe(0);
+			expect(scope.removeToast).toHaveBeenCalled();
+		});
+
+		it('should remove toast if config.tap is false but toast.tap is true', function () {	
+			var container = angular.element(
+			'<toaster-container toaster-options="{ \'tap-to-dismiss\': true, \'close-button\': false }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+			
+			spyOn(scope, 'removeToast').and.callThrough();
+			
+			toaster.pop({ type: 'info', tapToDismiss: true });
+			rootScope.$digest();
+			
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
+			
+			expect(scope.toasters.length).toBe(0);
+			expect(scope.removeToast).toHaveBeenCalled();
+		});
+
 		it('should remove toast if config.tap is true', function () {
 			var container = angular.element(
 			'<toaster-container toaster-options="{ \'tap-to-dismiss\': true, \'close-button\': true }"></toaster-container>');

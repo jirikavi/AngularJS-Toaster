@@ -4,7 +4,7 @@
 
     /*
      * AngularJS Toaster
-     * Version: 2.0.0
+     * Version: 2.1.0
      *
      * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
@@ -88,7 +88,8 @@
                             toastId: params.toastId,
                             onShowCallback: params.onShowCallback,
                             onHideCallback: params.onHideCallback,
-                            directiveData: params.directiveData
+                            directiveData: params.directiveData,
+                            tapToDismiss: params.tapToDismiss
                         };
                         toasterId = params.toasterId;
                     } else {
@@ -487,7 +488,11 @@
 
                             $scope.click = function(event, toast, isCloseButton) {
                                 event.stopPropagation();
-                                if ($scope.config.tap === true || (toast.showCloseButton === true && isCloseButton === true)) {
+
+                                var tapToDismiss = typeof toast.tapToDismiss === "boolean" 
+                                                        ? toast.tapToDismiss 
+                                                        : $scope.config.tap;
+                                if (tapToDismiss === true || (toast.showCloseButton === true && isCloseButton === true)) {
                                     var removeToast = true;
                                     if (toast.clickHandler) {
                                         if (angular.isFunction(toast.clickHandler)) {
