@@ -267,14 +267,6 @@ describe('toasterContainer', function () {
 			expect(body[0].outerHTML).toBe('<section>Body</section>');
 		});
 		
-		it('default toast template exists', function () {
-			inject(function($templateCache) {
-				var template = $templateCache.get('angularjs-toaster/toast.html');
-
-				expect(template.length).toBeGreaterThan(0);
-			});
-		});
-
 		it('should render template bodyOutputType when body is passed', function () {
 			inject(function($templateCache) {
 				$templateCache.put('/templatepath/template.html', '<section>Template</section>');
