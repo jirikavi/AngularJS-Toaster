@@ -79,6 +79,23 @@ angular.module('main', ['toaster', 'ngAnimate'])
     toaster.clear(toastInstance);
     ```
 
+    You can also provide each argument individually:
+    `toaster.clear(1, toastInstance.toastId);`
+
+    The following rules apply to the parameters passed to the `clear` function.
+
+    - If the `toasterId` is undefined, null, or does not exist AND a toaster container has 
+    defined an Id, no toasts will be cleared for that container.
+    - If the `toasterId` is undefined or null, each toaster container without a defined Id will 
+    be affected.
+    - If the `toasterId` is passed as `*`, all containers will be affected.
+    - if the `toasterId` is passed as `*` and a `toastId` is not defined, all toasts in all 
+    containers will be removed.
+    - If the `toastId` is undefined or null, any container that is targeted via the above rules 
+    will have all toasts removed from that container.
+    - If the `toastId` is defined, any container that is targeted via the above rules will remove 
+    toasts that match the `toastId`.
+
 
 ### Timeout
 By default, toasts have a timeout setting of 5000, meaning that they are removed after 5000 
