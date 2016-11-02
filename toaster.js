@@ -45,8 +45,8 @@
     ).run(['$templateCache', function($templateCache) {
             $templateCache.put('angularjs-toaster/toast.html',
                 '<div id="toast-container" ng-class="[config.position, config.animation]">' +
-                    '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click(toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
-                        '<div ng-if="toaster.showCloseButton" ng-click="click(toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
+                    '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click($event, toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
+                        '<div ng-if="toaster.showCloseButton" ng-click="click($event, toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
                         '<div ng-class="config.title">{{toaster.title}}</div>' +
                         '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                         '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
@@ -485,7 +485,8 @@
                                 }
                             };
 
-                            $scope.click = function(toast, isCloseButton) {
+                            $scope.click = function(event, toast, isCloseButton) {
+                                event.stopPropagation();
                                 if ($scope.config.tap === true || (toast.showCloseButton === true && isCloseButton === true)) {
                                     var removeToast = true;
                                     if (toast.clickHandler) {
