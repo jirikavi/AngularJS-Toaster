@@ -189,7 +189,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(1);
 			expect(scope.removeToast).not.toHaveBeenCalled();
@@ -208,7 +208,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(1);
 			expect(scope.removeToast).not.toHaveBeenCalled();
@@ -227,7 +227,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0], false);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0], false);
 			
 			expect(scope.toasters.length).toBe(1);
 			expect(scope.removeToast).not.toHaveBeenCalled();
@@ -246,7 +246,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(0);
 			expect(scope.removeToast).toHaveBeenCalled();
@@ -265,7 +265,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info', clickHandler: function (toast, isCloseButton) { return true; } });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(0);
 			expect(scope.removeToast).toHaveBeenCalled();
@@ -284,7 +284,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info', clickHandler: function (toast, isCloseButton) { } });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(1);
 			expect(scope.removeToast).not.toHaveBeenCalled();
@@ -304,7 +304,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info', clickHandler: 'clickHandler' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(0);
 			expect(scope.removeToast).toHaveBeenCalled();
@@ -324,7 +324,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info', clickHandler: 'clickHandler' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(1);
 			expect(scope.removeToast).not.toHaveBeenCalled();
@@ -347,7 +347,7 @@ describe('toasterContainer controller', function () {
 			toaster.pop({ type: 'info', clickHandler: 'clickHandler' });
 			rootScope.$digest();
 			
-			scope.click(scope.toasters[0]);
+			scope.click({stopPropagation: function() {return true;}}, scope.toasters[0]);
 			
 			expect(scope.toasters.length).toBe(0);
 			expect(scope.removeToast).toHaveBeenCalled();
