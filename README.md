@@ -4,9 +4,9 @@ AngularJS-Toaster
 **AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations.
 
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
-[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&busted=1)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
+[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&bust=12)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 2.0.0
+### Current Version 2.1.0
 
 ## Angular Compatibility
 AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets AngularJS, not Angular 2, although it could be used via ngUpgrade.  
@@ -63,6 +63,39 @@ angular.module('main', ['toaster', 'ngAnimate'])
     <button ng-click="pop()">Show a Toaster</button>
 </div>
 ```
+
+* Close the toast:
+
+    The `toaster` service exposes a `clear` function that takes two parameters: 
+
+    - `toasterId`: the id of the toast container you would like to target
+    - `toastId`: the id of the toast you would like to close
+
+    The `toaster.pop()` function returns an object that contains both the toasterId and the toastId.
+    This object can be passed directly into the `clear` function to close a toast:
+
+    ```js
+    var toastInstance = toaster.pop({type: 'info', body: 'Hello'});
+    toaster.clear(toastInstance);
+    ```
+
+    You can also provide each argument individually:
+    `toaster.clear(1, toastInstance.toastId);`
+
+    The following rules apply to the parameters passed to the `clear` function.
+
+    - If the `toasterId` is undefined, null, or does not exist AND a toaster container has 
+    defined an Id, no toasts will be cleared for that container.
+    - If the `toasterId` is undefined or null, each toaster container without a defined Id will 
+    be affected.
+    - If the `toasterId` is passed as `*`, all containers will be affected.
+    - if the `toasterId` is passed as `*` and a `toastId` is not defined, all toasts in all 
+    containers will be removed.
+    - If the `toastId` is undefined or null, any container that is targeted via the above rules 
+    will have all toasts removed from that container.
+    - If the `toastId` is defined, any container that is targeted via the above rules will remove 
+    toasts that match the `toastId`.
+
 
 ### Timeout
 By default, toasts have a timeout setting of 5000, meaning that they are removed after 5000 
@@ -312,6 +345,15 @@ and clicked:
 ```html
 <toaster-container toaster-options="{'tap-to-dismiss':false}"></toaster-container>
 ```
+
+This configuration can also be overriden at the toast level via the `tapToDismiss` parameter:
+
+```js
+toaster.pop({ type: 'info', body: 'One', tapToDismiss: true });
+```
+
+The toast configuration will always take precedence over the toaster-container configuration.
+
 
 ### Newest Toasts on Top
 The `newest-on-top` option is defaulted to true, adding new toasts on top of other existing toasts. 
