@@ -185,7 +185,7 @@ The close button html can be overridden either globally or per toast call.
 ### Body Output Type
 The rendering of the body content is configurable at both the Global level, which applies to all toasts, and the individual toast level when passed as an argument to the toast.
 
-There are four types of body renderings: trustedHtml', 'template', 'templateWithData', 'directive'.
+There are four types of body renderings: 'trustedHtml', 'template', 'templateWithData', 'directive'.
 
  - trustedHtml:  When using this configuration, the toast will parse the body content using 
 	`$sce.trustAsHtml(toast.body)`.
