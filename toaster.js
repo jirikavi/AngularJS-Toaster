@@ -304,7 +304,10 @@
                             );
                         }
                         
-                        function cancelOldTimer(toast) {
+                        function cancelOldTimer(toast)
+                        {
+                            if (isUndefinedOrNull(toast) || isUndefinedOrNull(toast.timeoutPromise))
+                                return;
                             $interval.cancel(toast.timeoutPromise);
                         }
 
