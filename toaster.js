@@ -303,14 +303,51 @@
                                 }, time, 1
                             );
                         }
+                        
+                        function cancelOldTimer(toast) {
+                            $interval.cancel(toast.timeoutPromise);
+                        }
 
                         scope.configureTimer = function(toast) {
+                            cancelOldTimer(toast);
+
                             var timeout = angular.isNumber(toast.timeout) ? toast.timeout : mergedConfig['time-out'];
                             if (typeof timeout === "object") timeout = timeout[toast.type];
                             if (timeout > 0) {
                                 setTimeout(toast, timeout);
                             }
                         };
+
+                        //Change Body if toast.body Changed And Update Timer...
+                        scope.$watch(
+                            function(){
+                                return (toaster.toast && toaster.toast.body) || undefined;
+                            }, function (newVal, oldVal) {
+                                if(newVal == undefined)
+                                    return;
+                                var toast = toaster.toast;
+                                // Set the toast.bodyOutputType to the default if it isn't set
+                                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
+                                switch (toast.bodyOutputType) {
+                                    case 'trustedHtml':
+                                        toast.html = $sce.trustAsHtml(toast.body);
+                                        break;
+                                    case 'template':
+                                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                                        break;
+                                    case 'templateWithData':
+                                        var fcGet = $parse(toast.body || mergedConfig['body-template']);
+                                        var templateWithData = fcGet(scope);
+                                        toast.bodyTemplate = templateWithData.template;
+                                        toast.data = templateWithData.data;
+                                        break;
+                                    case 'directive':
+                                        toast.html = toast.body;
+                                        break;
+                                }
+
+                                scope.configureTimer(toast);
+                            });
 
                         function addToast(toast, toastId) {
                             toast.type = mergedConfig['icon-classes'][toast.type];
