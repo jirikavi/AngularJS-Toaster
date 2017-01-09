@@ -52,7 +52,7 @@
                         '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
                         '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
                         '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                        '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
+                        '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="toaster.directiveData"></div></div>' +
                         '<div ng-switch-default >{{toaster.body}}</div>' +
                         '</div>' +
                     '</div>' +
@@ -220,7 +220,7 @@
                 restrict: 'A',
                 scope: {
                     directiveName: '@directiveName',
-                    directiveData: '@directiveData'
+                    directiveData: '=directiveData'
                 },
                 replace: true,
                 link: function(scope, elm, attrs) {
