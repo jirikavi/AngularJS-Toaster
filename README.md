@@ -13,7 +13,7 @@ AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets A
 If you are looking for the Angular 2 port of AngularJS-Toaster, it is located [here](https://github.com/Stabzs/Angular2-Toaster).
 
 ## Demo
-- Simple demo is at http://plnkr.co/edit/HKTC1a
+- Simple demo using the current version is at http://plnkr.co/edit/Esrdbl5S6hcmhiVmSjiF?p=preview
 - Older versions are http://plnkr.co/edit/1poa9A or http://plnkr.co/edit/4qpHwp or http://plnkr.co/edit/lzYaZt (with version 0.4.5)
 - Older version with Angular 1.2.0 is placed at http://plnkr.co/edit/mejR4h
 - Older version with Angular 1.2.0-rc.2 is placed at http://plnkr.co/edit/iaC2NY
