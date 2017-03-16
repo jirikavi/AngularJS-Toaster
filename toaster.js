@@ -286,7 +286,8 @@
                             closeButton: mergedConfig['close-button'],
                             closeHtml: mergedConfig['close-html'],
                             animation: mergedConfig['animation-class'],
-                            mouseoverTimer: mergedConfig['mouseover-timer-stop']
+                            mouseoverTimer: mergedConfig['mouseover-timer-stop'],
+                            postModificationReady: mergedConfig['post-modification-ready']
                         };
 
                         scope.$on(
@@ -303,14 +304,70 @@
                                 }, time, 1
                             );
                         }
+                        
+                        function cancelOldTimer(toast)
+                        {
+                            if (isUndefinedOrNull(toast) || isUndefinedOrNull(toast.timeoutPromise))
+                                return;
+                            $interval.cancel(toast.timeoutPromise);
+                        }
 
                         scope.configureTimer = function(toast) {
+                            cancelOldTimer(toast);
+
                             var timeout = angular.isNumber(toast.timeout) ? toast.timeout : mergedConfig['time-out'];
                             if (typeof timeout === "object") timeout = timeout[toast.type];
                             if (timeout > 0) {
                                 setTimeout(toast, timeout);
                             }
                         };
+
+                        if (!isUndefinedOrNull(scope.config.postModificationReady)
+                            && scope.config.postModificationReady==true) {
+                            //Change Body if toast.body Changed And Update Timer...
+                            scope.$watch(
+                                function () {
+                                    return (scope.toasters) || undefined;
+                                    //return (toaster.toast && toaster.toast.body) || undefined;
+                                },
+                                /**@param newVal {[*]}
+                                 *@param oldVal {[*]}
+                                 */
+                                function (newVal, oldVal) {
+                                    if (newVal == undefined || newVal.length == 0)
+                                        return;
+                                    for (var i = 0; i < oldVal.length; i++) {
+                                        for (var j = 0; j < newVal.length; j++) {
+                                            if (oldVal[i].toastId == newVal[j].toastId
+                                                //improve performance
+                                                && oldVal[i].body != newVal[j].body) {
+                                                var toast = newVal[j];
+                                                // Set the toast.bodyOutputType to the default if it isn't set
+                                                toast.bodyOutputType = toast.bodyOutputType || mergedConfig['body-output-type'];
+                                                switch (toast.bodyOutputType) {
+                                                    case 'trustedHtml':
+                                                        toast.html = $sce.trustAsHtml(toast.body);
+                                                        break;
+                                                    case 'template':
+                                                        toast.bodyTemplate = toast.body || mergedConfig['body-template'];
+                                                        break;
+                                                    case 'templateWithData':
+                                                        var fcGet = $parse(toast.body || mergedConfig['body-template']);
+                                                        var templateWithData = fcGet(scope);
+                                                        toast.bodyTemplate = templateWithData.template;
+                                                        toast.data = templateWithData.data;
+                                                        break;
+                                                    case 'directive':
+                                                        toast.html = toast.body;
+                                                        break;
+                                                }
+
+                                                scope.configureTimer(toast);
+                                            }
+                                        }
+                                    }
+                                }, true);
+                        }
 
                         function addToast(toast, toastId) {
                             toast.type = mergedConfig['icon-classes'][toast.type];
