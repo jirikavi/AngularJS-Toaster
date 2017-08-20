@@ -4,7 +4,7 @@
 
     /*
      * AngularJS Toaster
-     * Version: 2.1.0
+     * Version: 2.2.0
      *
      * Copyright 2013-2016 Jiri Kavulak.
      * All Rights Reserved.
@@ -396,7 +396,7 @@
                             }
 
                             if (angular.isFunction(toast.onShowCallback)) {
-                                toast.onShowCallback();
+                                toast.onShowCallback(toast);
                             }
                         }
 
@@ -420,7 +420,7 @@
                             scope.toasters.splice(toastIndex, 1);
 
                             if (angular.isFunction(toast.onHideCallback)) {
-                                toast.onHideCallback();
+                                toast.onHideCallback(toast);
                             }
                         }
 

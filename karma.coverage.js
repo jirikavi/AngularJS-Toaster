@@ -11,7 +11,8 @@ module.exports = function(config) {
 	config.coverageReporter = {
       dir: 'coverage/',
 	  reporters: [
-		  { type: 'html', subdir: 'html-report' }
+		  { type: 'html', subdir: 'html-report' },
+		  { type: 'text-summary' }
 	  ]
     };
 

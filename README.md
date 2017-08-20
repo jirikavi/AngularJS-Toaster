@@ -263,13 +263,13 @@ All four options can be configured either globally for all toasts or individuall
     ```
 
 ### On Show Callback
-An onShow callback function can be attached to each toast instance.  The callback will be invoked upon toast add.
+An onShow callback function can be attached to each toast instance, with the toast passed as a parameter when invoked.  The callback will be invoked upon toast add.
 
 ```js
 toaster.pop({
             title: 'A toast',
 		    body: 'with an onShow callback',
-			onShowCallback: function () { 
+			onShowCallback: function (toast) { 
 			    toaster.pop({
 			        title: 'A toast',
 				    body: 'invoked as an onShow callback'
@@ -279,13 +279,13 @@ toaster.pop({
 ```
 
 ### On Hide Callback
-An onHide callback function can be attached to each toast instance.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
+An onHide callback function can be attached to each toast instance, with the toast passed as a parameter when invoked.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
 
 ```js
 toaster.pop({
             title: 'A toast',
 		    body: 'with an onHide callback',
-			onHideCallback: function () { 
+			onHideCallback: function (toast) { 
 			    toaster.pop({
 			        title: 'A toast',
 				    body: 'invoked as an onHide callback'
