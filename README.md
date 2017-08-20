@@ -6,7 +6,7 @@ AngularJS-Toaster
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
 [![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&bust=12)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 2.1.0
+### Current Version 2.2.0
 
 ## Angular Compatibility
 AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets AngularJS, not Angular 2, although it could be used via ngUpgrade.  
@@ -263,13 +263,13 @@ All four options can be configured either globally for all toasts or individuall
     ```
 
 ### On Show Callback
-An onShow callback function can be attached to each toast instance.  The callback will be invoked upon toast add.
+An onShow callback function can be attached to each toast instance, with the toast passed as a parameter when invoked.  The callback will be invoked upon toast add.
 
 ```js
 toaster.pop({
             title: 'A toast',
 		    body: 'with an onShow callback',
-			onShowCallback: function () { 
+			onShowCallback: function (toast) { 
 			    toaster.pop({
 			        title: 'A toast',
 				    body: 'invoked as an onShow callback'
@@ -279,13 +279,13 @@ toaster.pop({
 ```
 
 ### On Hide Callback
-An onHide callback function can be attached to each toast instance.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
+An onHide callback function can be attached to each toast instance, with the toast passed as a parameter when invoked.  The callback will be invoked upon toast removal.  This can be used to chain toast calls.
 
 ```js
 toaster.pop({
             title: 'A toast',
 		    body: 'with an onHide callback',
-			onHideCallback: function () { 
+			onHideCallback: function (toast) { 
 			    toaster.pop({
 			        title: 'A toast',
 				    body: 'invoked as an onHide callback'

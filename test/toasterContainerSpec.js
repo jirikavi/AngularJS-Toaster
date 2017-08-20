@@ -406,7 +406,7 @@ describe('toasterContainer', function () {
 			expect(scope.toasters[1].body).toBe('third');
 		});
         
-        it('should invoke onShowCallback if it exists when toast is added', function () {
+    it('should invoke onShowCallback if it exists when toast is added', function () {
 			compileContainer();
 			var mock = {
 				callback : function () { }
@@ -421,7 +421,7 @@ describe('toasterContainer', function () {
 			expect(mock.callback).toHaveBeenCalled();
 		});
         
-        it('should not invoke onShowCallback if it does not exist when toast is added', function () {
+    it('should not invoke onShowCallback if it does not exist when toast is added', function () {
 			compileContainer();
 			var mock = {
 				callback : function () { }
@@ -434,6 +434,21 @@ describe('toasterContainer', function () {
 			rootScope.$digest();
 			
 			expect(mock.callback).not.toHaveBeenCalled();
+		});
+
+		it('should invoke pass toast instance to onShowCallback', function () {
+			compileContainer();
+			var toastSetByCallback = null;
+
+			function callback(t) {
+				toastSetByCallback = t;
+			}
+
+			toaster.pop({ type: 'info', body: 'toast 1', onShowCallback: callback });
+			
+			rootScope.$digest();
+			
+			expect(toastSetByCallback).not.toBeNull();
 		});
 	});
 	
@@ -476,6 +491,25 @@ describe('toasterContainer', function () {
 			rootScope.$digest();
 			
 			expect(mock.callback).toHaveBeenCalled();
+		});
+
+		it('should invoke pass toast instance to onHideCallback', function () {
+			var container = compileContainer();
+			var scope = container.scope();
+
+			var toastSetByCallback = null;
+
+			function callback(t) {
+				toastSetByCallback = t;
+			}
+
+			var toast = toaster.pop({ type: 'info', body: 'toast 1', onHideCallback: callback });
+			
+			rootScope.$digest();
+			scope.removeToast(toast.toastId);
+			rootScope.$digest();
+			
+			expect(toastSetByCallback).not.toBeNull();
 		});
 	});
 
