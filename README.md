@@ -159,6 +159,32 @@ toaster.pop({
 ```
 This option is given the most weight and will override the global configurations for that toast.  However, it will not persist to other toasts of that type and does not alter or pollute the global configuration.
 
+### Icon fonts and icon HTML markup
+
+The icon in the left part of a toast can be overridden either with an icon font symbol or any custom markup.
+If you would like to use *icon-bug* defined in your custom icon font, use the iconFontClass property:
+
+    ```js
+    toaster.pop({
+        // ...
+        iconFontClass: 'icon-bug';
+    });
+    ```
+
+It is also possible to change the icon base class with the `iconFontBaseClass` property. By default, the `icon` class is used, but you might want to change it to `fa` for Font Awesome, and so on.
+
+For placing custom HTML markup, use the following syntax:
+
+    ```js
+    toaster.pop({
+        // ...
+        iconTemplate: '<img class="user-avatar" src="https://placekitten.com/g/30/30">';
+    });
+    ```
+
+Note that the passed HTML string is not parsed, and any directives will not make effect.
+
+
 ### Close Html
 
 The close button html can be overridden either globally or per toast call.

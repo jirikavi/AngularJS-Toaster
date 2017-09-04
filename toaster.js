@@ -28,7 +28,7 @@
                 info: 'toast-info',
                 wait: 'toast-wait',
                 success: 'toast-success',
-                warning: 'toast-warning'
+                warning: 'toast-warning',
             },
             'body-output-type': '', // Options: '', 'trustedHtml', 'template', 'templateWithData', 'directive'
             'body-template': 'toasterBodyTmpl.html',
@@ -43,21 +43,24 @@
             'mouseover-timer-stop': true // stop timeout on mouseover and restart timer on mouseout
         }
     ).run(['$templateCache', function($templateCache) {
-            $templateCache.put('angularjs-toaster/toast.html',
-                '<div id="toast-container" ng-class="[config.position, config.animation]">' +
-                    '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click($event, toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
-                        '<div ng-if="toaster.showCloseButton" ng-click="click($event, toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
-                        '<div ng-class="config.title">{{toaster.title}}</div>' +
-                        '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
-                        '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
-                        '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                        '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                        '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
-                        '<div ng-switch-default >{{toaster.body}}</div>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>');
-        }
+        $templateCache.put('angularjs-toaster/toast.html',
+            '<div id="toast-container" ng-class="[config.position, config.animation]">' +
+            '<div ng-repeat="toaster in toasters" class="toast" ng-class="[toaster.type, {\'has-html-icon\': toaster.iconTemplate || toaster.iconFontClass}]" ng-click="click($event, toaster)" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
+            '<div ng-if="toaster.showCloseButton" ng-click="click($event, toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
+            '<div ng-if="toaster.iconTemplate" class="toast-icon" ng-bind-html="toaster.iconTemplate"></div>' +
+            '<div ng-if="toaster.iconFontClass && !toaster.iconTemplate" class="toast-icon"><i ng-class="[toaster.iconFontBaseClass, toaster.iconFontClass]"></i></div>' +
+            '<div ng-class="config.title">{{toaster.title}}</div>' +
+            '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
+            '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
+            '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
+            '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
+            '<div ng-switch-when="' +
+            'directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
+            '<div ng-switch-default >{{toaster.body}}</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>');
+    },
     ]).service(
         'toaster', [
             '$rootScope', 'toasterConfig', function($rootScope, toasterConfig) {
@@ -73,7 +76,7 @@
                     return Guid;
                 }());
 
-                this.pop = function(type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback) {
+                this.pop = function(type, title, body, timeout, bodyOutputType, clickHandler, toasterId, showCloseButton, toastId, onHideCallback, iconFontClass, iconFontBaseClass, iconTemplate) {
                     if (angular.isObject(type)) {
                         var params = type; // Enable named parameters as pop argument
                         this.toast = {
@@ -83,6 +86,9 @@
                             timeout: params.timeout,
                             bodyOutputType: params.bodyOutputType,
                             clickHandler: params.clickHandler,
+                            iconFontClass: params.iconFontClass,
+                            iconFontBaseClass: params.iconFontBaseClass,
+                            iconTemplate: params.iconTemplate,
                             showCloseButton: params.showCloseButton,
                             closeHtml: params.closeHtml,
                             toastId: params.toastId,
@@ -100,10 +106,18 @@
                             timeout: timeout,
                             bodyOutputType: bodyOutputType,
                             clickHandler: clickHandler,
+                            iconFontClass: iconFontClass,
+                            iconFontBaseClass: iconFontBaseClass,
+                            iconTemplate: iconTemplate,
                             showCloseButton: showCloseButton,
                             toastId: toastId,
                             onHideCallback: onHideCallback
                         };
+                    }
+
+                    if (this.toast.iconFontClass && !this.toast.iconFontBaseClass) {
+                        // Default icon class, may be changed to 'fa' or any other if specified explicitly.
+                        this.toast.iconFontBaseClass = 'icon';
                     }
 
                     if (!this.toast.toastId || !this.toast.toastId.length) {
@@ -111,7 +125,7 @@
                     }
 
                     $rootScope.$emit('toaster-newToast', toasterId, this.toast.toastId);
-                    
+
                     return {
                         toasterId: toasterId,
                         toastId: this.toast.toastId
@@ -329,7 +343,7 @@
                                             break;
                                         }
                                     }
-                                    
+
                                     if (dupFound) return;
                                 }
                             }
@@ -489,8 +503,8 @@
                             $scope.click = function(event, toast, isCloseButton) {
                                 event.stopPropagation();
 
-                                var tapToDismiss = typeof toast.tapToDismiss === "boolean" 
-                                                        ? toast.tapToDismiss 
+                                var tapToDismiss = typeof toast.tapToDismiss === "boolean"
+                                                        ? toast.tapToDismiss
                                                         : $scope.config.tap;
                                 if (tapToDismiss === true || (toast.showCloseButton === true && isCloseButton === true)) {
                                     var removeToast = true;
