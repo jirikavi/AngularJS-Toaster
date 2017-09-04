@@ -44,6 +44,9 @@ $toastContainerColor: #ffffff !default;
 $toastContainerShadowColor: #999999 !default;
 $toastContainerShadowColorHover: #000000 !default;
 
+$toastIconWidth: 30px !default;
+$toastIconHeight: 30px !default;
+$toastIconFontSize: 20px !default;
 
 .toast-title {
   font-weight: bold;
@@ -58,6 +61,19 @@ $toastContainerShadowColorHover: #000000 !default;
   a:hover {
     color: $textColorHover;
     text-decoration: none;
+  }
+}
+
+.toast-icon {
+  text-align: center;
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  width: $toastIconWidth;
+  height: $toastIconHeight;
+
+  .icon {
+    font-size: $toastIconFontSize;
   }
 }
 
@@ -165,6 +181,7 @@ button.toast-close-button {
       margin: 0 0 6px;
       padding: 15px 15px 15px 50px;
       width: 300px;
+      position: relative;
       -moz-border-radius: 3px 3px 3px 3px;
       -webkit-border-radius: 3px 3px 3px 3px;
       border-radius: 3px 3px 3px 3px;
@@ -201,6 +218,9 @@ button.toast-close-button {
     }
     .toast-warning {
       background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGYSURBVEhL5ZSvTsNQFMbXZGICMYGYmJhAQIJAICYQPAACiSDB8AiICQQJT4CqQEwgJvYASAQCiZiYmJhAIBATCARJy+9rTsldd8sKu1M0+dLb057v6/lbq/2rK0mS/TRNj9cWNAKPYIJII7gIxCcQ51cvqID+GIEX8ASG4B1bK5gIZFeQfoJdEXOfgX4QAQg7kH2A65yQ87lyxb27sggkAzAuFhbbg1K2kgCkB1bVwyIR9m2L7PRPIhDUIXgGtyKw575yz3lTNs6X4JXnjV+LKM/m3MydnTbtOKIjtz6VhCBq4vSm3ncdrD2lk0VgUXSVKjVDJXJzijW1RQdsU7F77He8u68koNZTz8Oz5yGa6J3H3lZ0xYgXBK2QymlWWA+RWnYhskLBv2vmE+hBMCtbA7KX5drWyRT/2JsqZ2IvfB9Y4bWDNMFbJRFmC9E74SoS0CqulwjkC0+5bpcV1CZ8NMej4pjy0U+doDQsGyo1hzVJttIjhQ7GnBtRFN1UarUlH8F3xict+HY07rEzoUGPlWcjRFRr4/gChZgc3ZL2d8oAAAAASUVORK5CYII=") !important;
+    }
+    .has-html-icon {
+      background-image: none !important;
     }
   }
   &.toast-top-full-width > div, &.toast-bottom-full-width > div {
