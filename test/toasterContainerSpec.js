@@ -511,6 +511,41 @@ describe('toasterContainer', function () {
 			
 			expect(toastSetByCallback).not.toBeNull();
 		});
+
+		it('should invoke onHideCallback if toast is removed by limit', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'limit\': 2, \'newest-on-top\': true }"></toaster-container>');
+				
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			
+			var scope = container.scope();
+
+			var mock = {
+				callback : function () { }
+			};
+			
+			spyOn(mock, 'callback');
+			
+			toaster.pop({ type: 'info', body: 'first', onHideCallback: mock.callback });
+			toaster.pop({ type: 'info', body: 'second' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('second');
+			expect(scope.toasters[1].body).toBe('first');
+			
+			toaster.pop({ type: 'info', body: 'third' });
+			
+			rootScope.$digest();
+			
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('third');
+			expect(scope.toasters[1].body).toBe('second');
+
+			expect(mock.callback).toHaveBeenCalled();
+		});
 	});
 
 

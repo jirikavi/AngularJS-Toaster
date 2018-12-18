@@ -386,12 +386,12 @@
                             if (mergedConfig['newest-on-top'] === true) {
                                 scope.toasters.unshift(toast);
                                 if (mergedConfig['limit'] > 0 && scope.toasters.length > mergedConfig['limit']) {
-                                    scope.toasters.pop();
+                                    removeToast(scope.toasters.length - 1);
                                 }
                             } else {
                                 scope.toasters.push(toast);
                                 if (mergedConfig['limit'] > 0 && scope.toasters.length > mergedConfig['limit']) {
-                                    scope.toasters.shift();
+                                    removeToast(0);
                                 }
                             }
 
