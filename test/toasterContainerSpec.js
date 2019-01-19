@@ -2,7 +2,7 @@
 
 'use strict';
 
-var rootScope, toaster, $compile;
+var rootScope, toaster, $compile, $sanitize;
 
 describe('toasterContainer', function () {
 	beforeEach(function () {
@@ -253,8 +253,8 @@ describe('toasterContainer', function () {
 			expect(buttons.length).toBe(0);
 			expect(buttons[0]).toBeUndefined();
 		});
-		
-		it('should render trustedHtml bodyOutputType', function () {
+
+		it('should render \'trustedHtml\' bodyOutputType', function () {
 			var container = compileContainer();
 			
 			toaster.pop({ bodyOutputType: 'trustedHtml', body: '<section>Body</section>' });
@@ -450,11 +450,11 @@ describe('toasterContainer', function () {
 			
 			expect(toastSetByCallback).not.toBeNull();
 		});
-	});
+	});	
 	
-	
+
 	describe('removeToast', function () {
-		it('should not remove toast if toastId does not match a toastId', function() {
+		it('should not remove toast if toastId does not match a toastId', function () {
 			var container = compileContainer();
 			var scope = container.scope();
 			
@@ -510,6 +510,41 @@ describe('toasterContainer', function () {
 			rootScope.$digest();
 			
 			expect(toastSetByCallback).not.toBeNull();
+		});
+
+		it('should invoke onHideCallback if toast is removed by limit', function () {
+			var container = angular.element(
+				'<toaster-container toaster-options="{\'limit\': 2, \'newest-on-top\': true }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+
+			var scope = container.scope();
+
+			var mock = {
+				callback : function () { }
+			};
+
+			spyOn(mock, 'callback');
+
+			toaster.pop({ type: 'info', body: 'first', onHideCallback: mock.callback });
+			toaster.pop({ type: 'info', body: 'second' });
+
+			rootScope.$digest();
+
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('second');
+			expect(scope.toasters[1].body).toBe('first');
+
+			toaster.pop({ type: 'info', body: 'third' });
+
+			rootScope.$digest();
+
+			expect(scope.toasters.length).toBe(2);
+			expect(scope.toasters[0].body).toBe('third');
+			expect(scope.toasters[1].body).toBe('second');
+
+			expect(mock.callback).toHaveBeenCalled();
 		});
 	});
 
@@ -695,6 +730,120 @@ describe('toasterContainer', function () {
 	});
 });
 
+
+describe('toastContainer -> addToast -> bodyOutputType.html with ngSanitize', function () {
+	beforeEach(function () {
+		module('ngSanitize');
+		module('toaster');
+		
+		// inject the toaster service
+		inject(function (_toaster_, _$rootScope_, _$compile_, _$sanitize_) {
+			toaster = _toaster_;
+			rootScope = _$rootScope_;
+			$compile = _$compile_;
+			$sanitize = _$sanitize_;
+		});
+	});
+
+	it('should render \'html\' bodyOutputType if content is safe', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'html', body: '<div>Body</div>' });
+		
+		rootScope.$digest();
+
+		var body = container[0].querySelector('.toast-message div');
+
+		expect(body.innerHTML).toBe('<div>Body</div>');
+	});
+
+	it('should render \'html\' bodyOutputType removing cusotm element tags', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'html', body: '<custom>Body</custom>' });
+		
+		rootScope.$digest();
+
+		var body = container[0].querySelector('.toast-message div');
+
+		expect(body.innerHTML).toBe('Body');
+	});
+
+	it('should render \'html\' bodyOutputType removing ids', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'html', body: '<div id="test">Body</div>' });
+		
+		rootScope.$digest();
+
+		var body = container[0].querySelector('.toast-message div');
+
+		expect(body.innerHTML).toBe('<div>Body</div>');
+	});
+
+	it('should remove unsafe attributes if \'html\' bodyOutputType', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'html', body: '<p style="color:blue">an html\n' +
+			'<em onmouseover="this.textContent=\'PWN3D!\'"><a href="www.google.com">click here</a></em>\n' +
+			'snippet</p>' });
+		
+		rootScope.$digest();
+
+		var body = container[0].querySelector('em');
+
+		expect(body.outerHTML).toEqual('<em><a href="www.google.com">click here</a></em>');
+	});
+});
+
+describe('toastContainer -> addToast -> bodyOutputType.html without ngSanitize', function () {
+	beforeEach(function () {
+		module('toaster');
+		
+		// inject the toaster service
+		inject(function (_toaster_, _$rootScope_, _$compile_) {
+			toaster = _toaster_;
+			rootScope = _$rootScope_;
+			$compile = _$compile_;
+		});
+	});
+
+	it('should throw exception \'html\' bodyOutputType if content is safe', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'html', body: '<div>Body</div>' });
+
+		var wasError = false;
+		try {
+			rootScope.$digest();
+		} catch (e) {
+			expect(e.message.includes('Attempting to use an unsafe value in a safe context')).toBeTruthy();
+			wasError = true;
+		}
+
+		expect(wasError).toEqual(true);
+		expect(container[0].querySelector('div[ng-switch-when="html"]').innerHTML).toEqual('');
+	});
+
+	it('should throw exception \'html\' bodyOutputType if content is unsafe', function () {
+		var container = compileContainer();
+		
+		toaster.pop({ bodyOutputType: 'html', body: '<p style="color:blue">an html\n' +
+			'<em onmouseover="this.textContent=\'PWN3D!\'"><a href="www.google.com">click here</a></em>\n' +
+			'snippet</p>' });
+
+		var wasError = false;
+		try {
+			rootScope.$digest();
+		} catch (e) {
+			expect(e.message.includes('Attempting to use an unsafe value in a safe context')).toBeTruthy();
+			wasError = true;
+		}
+
+		expect(wasError).toEqual(true);
+		expect(container[0].querySelector('div[ng-switch-when="html"]').innerHTML).toEqual('');
+	});
+});
 
 describe('toasterContainer', function () {
 	var $interval, $intervalSpy;

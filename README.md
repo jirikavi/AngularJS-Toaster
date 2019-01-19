@@ -1,16 +1,16 @@
 AngularJS-Toaster
 =================
 
-**AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations.
+**AngularJS Toaster** is an AngularJS port of the **toastr** non-blocking notification jQuery library. It requires AngularJS v1.2.6 or higher and angular-animate for the CSS3 transformations.  `angular-sanitize` is required if using the `html` bodyOutputType.
 
 [![Build Status](https://travis-ci.org/jirikavi/AngularJS-Toaster.svg)](https://travis-ci.org/jirikavi/AngularJS-Toaster)
-[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&bust=12)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
+[![Coverage Status](https://coveralls.io/repos/jirikavi/AngularJS-Toaster/badge.svg?branch=master&service=github&bust=3.0.0)](https://coveralls.io/github/jirikavi/AngularJS-Toaster?branch=master)
 
-### Current Version 2.2.0
+### Current Version 3.0.0
 
 ## Angular Compatibility
-AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets AngularJS, not Angular 2, although it could be used via ngUpgrade.  
-If you are looking for the Angular 2 port of AngularJS-Toaster, it is located [here](https://github.com/Stabzs/Angular2-Toaster).
+AngularJS-Toaster requires AngularJS v1.2.6 or higher and specifically targets AngularJS, not Angular 2-7, although it could be used via ngUpgrade.  
+If you are looking for the Angular 2-7 port of AngularJS-Toaster, it is located [here](https://github.com/Stabzs/Angular2-Toaster).
 
 ## Demo
 - Simple demo using the current version is at http://plnkr.co/edit/Esrdbl5S6hcmhiVmSjiF?p=preview
@@ -32,10 +32,10 @@ npm install --save angularjs-toaster
 * Link scripts:
 
 ```html
-<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/3.0.0/toaster.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js" ></script>
 <script src="https://code.angularjs.org/1.2.0/angular-animate.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/3.0.0/toaster.min.js"></script>
 ```
 
 * Add toaster container directive: 
@@ -185,11 +185,12 @@ The close button html can be overridden either globally or per toast call.
 ### Body Output Type
 The rendering of the body content is configurable at both the Global level, which applies to all toasts, and the individual toast level when passed as an argument to the toast.
 
-There are four types of body renderings: 'trustedHtml', 'template', 'templateWithData', 'directive'.
+There are five types of body renderings: 'html', 'trustedHtml', 'template', 'templateWithData', 'directive'.
+
+ - html: When using this configuration, the toast will bind the toast.html to `ng-bind-html`.  If the `angular-sanitize` library is not loaded, an exception will be thrown.
 
  - trustedHtml:  When using this configuration, the toast will parse the body content using 
-	`$sce.trustAsHtml(toast.body)`.
-	If the html can be successfully parsed, it will be bound to the toast via `ng-bind-html`.  If it cannot be parsed as "trustable" html, an exception will be thrown.	
+	`$sce.trustAsHtml(toast.body)`.  It will bypass any sanitization.  Only use this option if you own and trust the html content!
 
  - template:  Will use the `toast.body` if passed as an argument, else it will fallback to the template bound to the `'body-template': 'toasterBodyTmpl.html'` configuration option.
  
@@ -243,7 +244,7 @@ There are four types of body renderings: 'trustedHtml', 'template', 'templateWit
         
     There are additional documented use cases in these [tests](test/directiveTemplateSpec.js).
     
-All four options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
+All five options can be configured either globally for all toasts or individually per toast.pop() call.  If the `body-output-type` option is configured on the toast, it will take precedence over the global configuration for that toast instance.
 
  - Globally:
  
@@ -396,14 +397,14 @@ If you do not want to use animations, you can safely remove the angular-animate.
      }, 0);
     ```
 		
-## Author
-**Jiri Kavulak**
+## Authors
+**Jiri Kavulak, Stabzs**
 
 ## Credits
 Inspired by http://codeseven.github.io/toastr/demo.html.
 
 ## Copyright
-Copyright © 2013-2016 [Jiri Kavulak](https://twitter.com/jirikavi).
+Copyright © 2013-2019 [Jiri Kavulak](https://twitter.com/jirikavi), [Stabzs](https://github.com/Stabzs).
 
 ## License 
 AngularJS-Toaster is under MIT license - http://www.opensource.org/licenses/mit-license.php

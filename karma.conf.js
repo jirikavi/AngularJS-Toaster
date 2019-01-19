@@ -16,6 +16,7 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js',
+      'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-sanitize.js',
       'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-mocks.js',
       'toaster.js',
       'test/**/*Spec.js'
