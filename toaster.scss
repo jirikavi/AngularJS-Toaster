@@ -149,7 +149,8 @@ button.toast-close-button {
     pointer-events: none;
   }
   &.toast-center > div, &.toast-top-center > div, &.toast-bottom-center > div {
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
     pointer-events: auto;
   }
   &.toast-center > button, &.toast-top-center > button, &.toast-bottom-center > button {
@@ -205,7 +206,8 @@ button.toast-close-button {
   }
   &.toast-top-full-width > div, &.toast-bottom-full-width > div {
     width: 96%;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
