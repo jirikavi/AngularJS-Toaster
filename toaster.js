@@ -1,19 +1,19 @@
 /* global angular */
+/*
+    * @license
+    * AngularJS Toaster
+    * Version: 3.0.0
+    *
+    * Copyright 2013-2019 Jiri Kavulak, Stabzs.
+    * All Rights Reserved.
+    * Use, reproduction, distribution, and modification of this code is subject to the terms and
+    * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
+    *
+    * Authors: Jiri Kavulak, Stabzs
+    * Related to project of John Papa, Hans Fjällemark and Nguyễn Thiện Hùng (thienhung1989)
+*/
 (function(window, document) {
     'use strict';
-
-    /*
-     * AngularJS Toaster
-     * Version: 2.2.0
-     *
-     * Copyright 2013-2016 Jiri Kavulak.
-     * All Rights Reserved.
-     * Use, reproduction, distribution, and modification of this code is subject to the terms and
-     * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
-     *
-     * Author: Jiri Kavulak
-     * Related to project of John Papa, Hans Fjällemark and Nguyễn Thiện Hùng (thienhung1989)
-     */
 
     angular.module('toaster', []).constant(
         'toasterConfig', {
@@ -30,7 +30,7 @@
                 success: 'toast-success',
                 warning: 'toast-warning'
             },
-            'body-output-type': '', // Options: '', 'trustedHtml', 'template', 'templateWithData', 'directive'
+            'body-output-type': '', // Options: '', 'html', 'trustedHtml', 'template', 'templateWithData', 'directive'
             'body-template': 'toasterBodyTmpl.html',
             'icon-class': 'toast-info',
             'position-class': 'toast-top-right', // Options (see CSS):
@@ -49,10 +49,11 @@
                         '<div ng-if="toaster.showCloseButton" ng-click="click($event, toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
                         '<div ng-class="config.title">{{toaster.title}}</div>' +
                         '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
+                        '<div ng-switch-when="html" ng-bind-html="toaster.body"></div>' +
                         '<div ng-switch-when="trustedHtml" ng-bind-html="toaster.html"></div>' +
                         '<div ng-switch-when="template"><div ng-include="toaster.bodyTemplate"></div></div>' +
                         '<div ng-switch-when="templateWithData"><div ng-include="toaster.bodyTemplate"></div></div>' +
-                        '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="{{toaster.directiveData}}"></div></div>' +
+                        '<div ng-switch-when="directive"><div directive-template directive-name="{{toaster.html}}" directive-data="toaster.directiveData"></div></div>' +
                         '<div ng-switch-default >{{toaster.body}}</div>' +
                         '</div>' +
                     '</div>' +
@@ -220,7 +221,7 @@
                 restrict: 'A',
                 scope: {
                     directiveName: '@directiveName',
-                    directiveData: '@directiveData'
+                    directiveData: '=directiveData'
                 },
                 replace: true,
                 link: function(scope, elm, attrs) {
@@ -386,12 +387,12 @@
                             if (mergedConfig['newest-on-top'] === true) {
                                 scope.toasters.unshift(toast);
                                 if (mergedConfig['limit'] > 0 && scope.toasters.length > mergedConfig['limit']) {
-                                    scope.toasters.pop();
+                                    removeToast(scope.toasters.length - 1);
                                 }
                             } else {
                                 scope.toasters.push(toast);
                                 if (mergedConfig['limit'] > 0 && scope.toasters.length > mergedConfig['limit']) {
-                                    scope.toasters.shift();
+                                    removeToast(0);
                                 }
                             }
 
@@ -445,7 +446,6 @@
                         scope._onNewToast = function(event, toasterId, toastId) {
                             // Compatibility: if toaster has no toasterId defined, and if call to display
                             // hasn't either, then the request is for us
-
                             if ((isUndefinedOrNull(scope.config.toasterId) && isUndefinedOrNull(toasterId)) || (!isUndefinedOrNull(scope.config.toasterId) && !isUndefinedOrNull(toasterId) && scope.config.toasterId == toasterId)) {
                                 addToast(toaster.toast, toastId);
                             }

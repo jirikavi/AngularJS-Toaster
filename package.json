@@ -1,9 +1,9 @@
 {
   "name": "angularjs-toaster",
-  "version": "2.2.0",
-  "main": "toaster.js",
+  "version": "3.0.0",
+  "main": "index.js",
   "description": "AngularJS Toaster is a customized version of toastr non-blocking notification javascript library",
-  "author": "Jiri Kavulak",
+  "author": "Jiri Kavulak, Stabzs",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "karma start",
-    "coverage": "karma start karma.coverage.js"
+    "coverage": "karma start karma.coverage.js",
+    "build": "uglifyjs --compress --mangle --output toaster.min.js --comments -- toaster.js"
   },
   "dependencies": {},
   "devDependencies": {
@@ -21,10 +22,11 @@
     "coveralls": "2.13.1",
     "jasmine-core": "^2.3.4",
     "karma": "1.7.0",
-    "karma-cli": "1.0.1",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-cli": "1.0.1",
     "karma-coverage": "^1.1.1",
-    "karma-jasmine": "^1.1.0"
+    "karma-jasmine": "^1.1.0",
+    "uglify-js": "3.4.9"
   },
   "jspm": {
     "main": "toaster",
