@@ -431,4 +431,52 @@ describe('toasterContainer controller', function () {
     		expect(console.log).toHaveBeenCalledWith("TOAST-NOTE: Your click handler is not inside a parent scope of toaster-container.");
 		});
 	});
+
+	describe('keydown', function () {
+		it('should do nothing if spacebar is pressed', function () {
+			var container = angular.element(
+						'<toaster-container toaster-options="{ \'tap-to-dismiss\': true, \'close-button\': false }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+
+			spyOn(scope, 'removeToast').and.callThrough();
+
+			toaster.pop({type: 'info'});
+			rootScope.$digest();
+
+			scope.enter({
+				stopPropagation: function () {
+					return true;
+				}, originalEvent: {key: 'Spacebar'}
+			}, scope.toasters[0]);
+
+			expect(scope.toasters.length).toBe(1);
+			expect(scope.removeToast).not.toHaveBeenCalled();
+		});
+
+		it('should remove toast if enter is pressed', function () {
+			var container = angular.element(
+						'<toaster-container toaster-options="{ \'tap-to-dismiss\': true, \'close-button\': false }"></toaster-container>');
+
+			$compile(container)(rootScope);
+			rootScope.$digest();
+			var scope = container.scope();
+
+			spyOn(scope, 'removeToast').and.callThrough();
+
+			toaster.pop({type: 'info'});
+			rootScope.$digest();
+
+			scope.enter({
+				stopPropagation: function () {
+					return true;
+				}, originalEvent: {key: 'Enter'}
+			}, scope.toasters[0]);
+
+			expect(scope.toasters.length).toBe(0);
+			expect(scope.removeToast).toHaveBeenCalled();
+		});
+	});
 });

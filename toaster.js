@@ -46,8 +46,9 @@
             $templateCache.put('angularjs-toaster/toast.html',
                 '<div id="toast-container" ng-class="[config.position, config.animation]">' +
                     '<div ng-repeat="toaster in toasters" class="toast" ng-class="toaster.type" ng-click="click($event, toaster)" ' +
-                        'ng-keypress="click($event, toaster)"  tabindex="0" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
-                        '<div ng-if="toaster.showCloseButton" ng-click="click($event, toaster, true)" ng-bind-html="toaster.closeHtml"></div>' +
+                        'ng-keydown="enter($event, toaster)" tabindex="0" ng-mouseover="stopTimer(toaster)" ng-mouseout="restartTimer(toaster)">' +
+                        '<div ng-if="toaster.showCloseButton" ng-click="click($event, toaster, true)" ' +
+                        'ng-keydown="enter($event, toaster)" ng-bind-html="toaster.closeHtml"></div>' +
                         '<div ng-class="config.title">{{toaster.title}}</div>' +
                         '<div ng-class="config.message" ng-switch on="toaster.bodyOutputType">' +
                         '<div ng-switch-when="html" ng-bind-html="toaster.body"></div>' +
@@ -486,6 +487,13 @@
                                     $scope.removeToast(toast.toastId);
                                 }
                             };
+
+                            // Called on keydown
+                            $scope.enter = function(event, toast, isCloseButton) {
+                                if (event.originalEvent.key === 'Enter') {
+                                    $scope.click(event,toast,isCloseButton);
+                                }
+                            }
 
                             $scope.click = function(event, toast, isCloseButton) {
                                 event.stopPropagation();
