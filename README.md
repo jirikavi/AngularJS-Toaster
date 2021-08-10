@@ -121,7 +121,7 @@ By passing the time-out configuration as an object instead of a number, you can 
 If a type is not defined and specified, a timeout will not be applied, making the toast "sticky".
 
 * Per toast constructed via toaster.pop('success', "title", "text"):
-```html
+```js
 toaster.pop({
                 type: 'error',
                 title: 'Title text',
@@ -149,7 +149,7 @@ By passing the close-button configuration as an object instead of a boolean, you
 If a type is not defined and specified, the default behavior for that type is false.
 
 * Per toast constructed via toaster.pop('success', "title", "text"):
-```html
+```js
 toaster.pop({
                 type: 'error',
                 title: 'Title text',
@@ -220,10 +220,11 @@ There are five types of body renderings: 'html', 'trustedHtml', 'template', 'tem
             };
     }])
     ```
+
      - Will use the `toast.directiveData` argument to accept data that will be bound to the directive's scope. The directive cannot use isolateScope and will
      throw an exception if isolateScope is detected.  All data must be passed via the directiveData argument.
     
-        ```js
+      ```js
       // The toast pop call, passing in a directive name to be rendered
       toaster.pop({
               type: 'info',
@@ -231,16 +232,16 @@ There are five types of body renderings: 'html', 'trustedHtml', 'template', 'tem
               bodyOutputType: 'directive',
               directiveData: { name: 'Bob' }
       });
-        ```
+      ```
         
-        ```js
+      ```js
       // The directive that will be dynamically rendered
       .directive('bindName', [function () {
             return {
                 template: "<span style='color:orange'>Hi {{directiveData.name}}!</span>"
             };
       }])
-        ```
+      ```
         
     There are additional documented use cases in these [tests](test/directiveTemplateSpec.js).
     
